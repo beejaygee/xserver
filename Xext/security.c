@@ -350,18 +350,14 @@ SecurityStartAuthorizationTimer(SecurityAuthorizationPtr pAuth)
 static int
 ProcSecurityQueryVersion(ClientPtr client)
 {
+    REQUEST_HEAD_STRUCT(xSecurityQueryVersionReq);
+    REQUEST_FIELD_CARD16(majorVersion);
+    REQUEST_FIELD_CARD16(minorVersion);
+
     xSecurityQueryVersionReply reply = {
         .majorVersion = SERVER_SECURITY_MAJOR_VERSION,
         .minorVersion = SERVER_SECURITY_MINOR_VERSION
     };
-
-    REQUEST(xSecurityQueryVersionReq);
-    REQUEST_SIZE_MATCH(xSecurityQueryVersionReq);
-
-    if (client->swapped) {
-        swaps(&stuff->majorVersion);
-        swaps(&stuff->minorVersion);
-    }
 
     if (client->swapped) {
         swaps(&reply.majorVersion);
@@ -406,7 +402,25 @@ SecurityEventSelectForAuthorization(SecurityAuthorizationPtr pAuth,
 static int
 ProcSecurityGenerateAuthorization(ClientPtr client)
 {
-    REQUEST(xSecurityGenerateAuthorizationReq);
+    REQUEST_HEAD_AT_LEAST(xSecurityGenerateAuthorizationReq);
+    REQUEST_FIELD_CARD16(nbytesAuthProto);
+    REQUEST_FIELD_CARD16(nbytesAuthData);
+    REQUEST_FIELD_CARD32(valueMask);
+
+    int values_offset = bytes_to_int32(stuff->nbytesAuthProto) +
+            bytes_to_int32(stuff->nbytesAuthData);
+
+    if (values_offset > stuff->length - bytes_to_int32(sz_xSecurityGenerateAuthorizationReq))
+        return BadLength;
+
+    CARD32 *values = (CARD32 *) (&stuff[1]) + values_offset;
+
+    if (client->swapped) {
+        unsigned long nvalues;
+        nvalues = (((CARD32 *) stuff) + stuff->length) - values;
+        SwapLongs(values, nvalues);
+    }
+
     int len;                    /* request length in CARD32s */
     Bool removeAuth = FALSE;    /* if bailout, call RemoveAuthorization? */
     int err;                    /* error to return from this function */
@@ -414,7 +428,6 @@ ProcSecurityGenerateAuthorization(ClientPtr client)
     unsigned int trustLevel;    /* trust level of new auth */
     XID group;                  /* group of new auth */
     CARD32 timeout;             /* timeout of new auth */
-    CARD32 *values;             /* list of supplied attributes */
     char *protoname;            /* auth proto name sent in request */
     char *protodata;            /* auth proto data sent in request */
     unsigned int authdata_len;  /* # bytes of generated auth data */
@@ -422,14 +435,6 @@ ProcSecurityGenerateAuthorization(ClientPtr client)
     Mask eventMask;             /* what events on this auth does client want */
 
     /* check request length */
-
-    REQUEST_AT_LEAST_SIZE(xSecurityGenerateAuthorizationReq);
-
-    if (client->swapped) {
-        swaps(&stuff->nbytesAuthProto);
-        swaps(&stuff->nbytesAuthData);
-        swapl(&stuff->valueMask);
-    }
 
     len = bytes_to_int32(SIZEOF(xSecurityGenerateAuthorizationReq));
     len += bytes_to_int32(stuff->nbytesAuthProto);
@@ -585,14 +590,11 @@ ProcSecurityGenerateAuthorization(ClientPtr client)
 static int
 ProcSecurityRevokeAuthorization(ClientPtr client)
 {
-    REQUEST(xSecurityRevokeAuthorizationReq);
+    REQUEST_HEAD_STRUCT(xSecurityRevokeAuthorizationReq);
+    REQUEST_FIELD_CARD32(authId);
+
     SecurityAuthorizationPtr pAuth;
     int rc;
-
-    REQUEST_SIZE_MATCH(xSecurityRevokeAuthorizationReq);
-    if (client->swapped) {
-        swapl(&stuff->authId);
-    }
 
     rc = dixLookupResourceByType((void **) &pAuth, stuff->authId,
                                  SecurityAuthorizationResType, client,
