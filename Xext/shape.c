@@ -207,17 +207,15 @@ CreateClipShape(WindowPtr pWin)
 static int
 ProcShapeQueryVersion(ClientPtr client)
 {
-    REQUEST_SIZE_MATCH(xShapeQueryVersionReq);
+    REQUEST_HEAD_STRUCT(xShapeQueryVersionReq);
 
     xShapeQueryVersionReply reply = {
         .majorVersion = SERVER_SHAPE_MAJOR_VERSION,
         .minorVersion = SERVER_SHAPE_MINOR_VERSION
     };
 
-    if (client->swapped) {
-        swaps(&reply.majorVersion);
-        swaps(&reply.minorVersion);
-    }
+    REPLY_FIELD_CARD16(majorVersion);
+    REPLY_FIELD_CARD16(minorVersion);
 
     return X_SEND_REPLY_SIMPLE(client, reply);
 }
@@ -290,8 +288,11 @@ ShapeRectangles(ClientPtr client, xShapeRectanglesReq *stuff)
 static int
 ProcShapeRectangles(ClientPtr client)
 {
-    REQUEST(xShapeRectanglesReq);
-    REQUEST_AT_LEAST_SIZE(xShapeRectanglesReq);
+    REQUEST_HEAD_AT_LEAST(xShapeRectanglesReq);
+    REQUEST_FIELD_CARD32(dest);
+    REQUEST_FIELD_CARD16(xOff);
+    REQUEST_FIELD_CARD16(yOff);
+    REQUEST_REST_CARD16();
 
     if (client->swapped) {
         swapl(&stuff->dest);
@@ -395,8 +396,11 @@ ShapeMask(ClientPtr client, xShapeMaskReq *stuff)
 static int
 ProcShapeMask(ClientPtr client)
 {
-    REQUEST(xShapeMaskReq);
-    REQUEST_SIZE_MATCH(xShapeMaskReq);
+    REQUEST_HEAD_STRUCT(xShapeMaskReq);
+    REQUEST_FIELD_CARD32(dest);
+    REQUEST_FIELD_CARD16(xOff);
+    REQUEST_FIELD_CARD16(yOff);
+    REQUEST_FIELD_CARD32(src);
 
     if (client->swapped) {
         swapl(&stuff->dest);
@@ -531,8 +535,11 @@ ShapeCombine(ClientPtr client, xShapeCombineReq *stuff)
 static int
 ProcShapeCombine(ClientPtr client)
 {
-    REQUEST(xShapeCombineReq);
-    REQUEST_AT_LEAST_SIZE(xShapeCombineReq);
+    REQUEST_HEAD_STRUCT(xShapeCombineReq);
+    REQUEST_FIELD_CARD32(dest);
+    REQUEST_FIELD_CARD16(xOff);
+    REQUEST_FIELD_CARD16(yOff);
+    REQUEST_FIELD_CARD32(src);
 
     if (client->swapped) {
         swapl(&stuff->dest);
@@ -608,8 +615,10 @@ ShapeOffset(ClientPtr client, xShapeOffsetReq *stuff)
 static int
 ProcShapeOffset(ClientPtr client)
 {
-    REQUEST(xShapeOffsetReq);
-    REQUEST_AT_LEAST_SIZE(xShapeOffsetReq);
+    REQUEST_HEAD_AT_LEAST(xShapeOffsetReq);
+    REQUEST_FIELD_CARD32(dest);
+    REQUEST_FIELD_CARD16(yOff);
+    REQUEST_FIELD_CARD16(yOff);
 
     if (client->swapped) {
         swapl(&stuff->dest);
@@ -645,13 +654,16 @@ ProcShapeOffset(ClientPtr client)
 static int
 ProcShapeQueryExtents(ClientPtr client)
 {
-    REQUEST(xShapeQueryExtentsReq);
-    REQUEST_SIZE_MATCH(xShapeQueryExtentsReq);
+    REQUEST_HEAD_STRUCT(xShapeQueryExtentsReq);
+    REQUEST_FIELD_CARD32(window);
 
     if (client->swapped)
         swapl(&stuff->window);
 
     WindowPtr pWin;
+    BoxRec extents, *pExtents;
+    RegionPtr region;
+
     int rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
     if (rc != Success)
         return rc;
@@ -756,16 +768,13 @@ ShapeFreeEvents(void *data, XID id)
 static int
 ProcShapeSelectInput(ClientPtr client)
 {
-    REQUEST(xShapeSelectInputReq);
+    REQUEST_HEAD_STRUCT(xShapeSelectInputReq);
+    REQUEST_FIELD_CARD32(window);
+
     WindowPtr pWin;
     ShapeEventPtr pShapeEvent, pNewShapeEvent, *pHead;
     XID clientResource;
     int rc;
-
-    REQUEST_SIZE_MATCH(xShapeSelectInputReq);
-
-    if (client->swapped)
-        swapl(&stuff->window);
 
     rc = dixLookupWindow(&pWin, stuff->window, client, DixReceiveAccess);
     if (rc != Success)
@@ -931,15 +940,12 @@ SendShapeNotify(WindowPtr pWin, int which)
 static int
 ProcShapeInputSelected(ClientPtr client)
 {
-    REQUEST(xShapeInputSelectedReq);
+    REQUEST_HEAD_STRUCT(xShapeInputSelectedReq);
+    REQUEST_FIELD_CARD32(window);
+
     WindowPtr pWin;
     ShapeEventPtr pShapeEvent, *pHead;
     int enabled, rc;
-
-    REQUEST_SIZE_MATCH(xShapeInputSelectedReq);
-
-    if (client->swapped)
-        swapl(&stuff->window);
 
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
     if (rc != Success)
@@ -968,15 +974,12 @@ ProcShapeInputSelected(ClientPtr client)
 static int
 ProcShapeGetRectangles(ClientPtr client)
 {
-    REQUEST(xShapeGetRectanglesReq);
+    REQUEST_HEAD_STRUCT(xShapeGetRectanglesReq);
+    REQUEST_FIELD_CARD32(window);
+
     WindowPtr pWin;
     int nrects, rc;
     RegionPtr region;
-
-    REQUEST_SIZE_MATCH(xShapeGetRectanglesReq);
-
-    if (client->swapped)
-        swapl(&stuff->window);
 
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
     if (rc != Success)
