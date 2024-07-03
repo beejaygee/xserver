@@ -67,6 +67,10 @@ static void SGEGenericEvent(xEvent *from, xEvent *to);
 static int
 ProcGEQueryVersion(ClientPtr client)
 {
+    REQUEST_HEAD_STRUCT(xGEQueryVersionReq);
+    REQUEST_FIELD_CARD16(majorVersion);
+    REQUEST_FIELD_CARD16(minorVersion);
+
     GEClientInfoPtr pGEClient = GEGetClient(client);
 
     REQUEST(xGEQueryVersionReq);
