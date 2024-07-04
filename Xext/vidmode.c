@@ -198,7 +198,7 @@ static int
 ProcVidModeQueryVersion(ClientPtr client)
 {
     DEBUG_P("XF86VidModeQueryVersion");
-    REQUEST_SIZE_MATCH(xXF86VidModeQueryVersionReq);
+    REQUEST_HEAD_STRUCT(xXF86VidModeQueryVersionReq);
 
     xXF86VidModeQueryVersionReply reply = {
         .majorVersion = SERVER_XF86VIDMODE_MAJOR_VERSION,
@@ -216,11 +216,16 @@ ProcVidModeQueryVersion(ClientPtr client)
 static int
 ProcVidModeGetModeLine(ClientPtr client)
 {
+<<<<<<< HEAD
     REQUEST(xXF86VidModeGetModeLineReq);
     REQUEST_SIZE_MATCH(xXF86VidModeGetModeLineReq);
 
     if (client->swapped)
         swaps(&stuff->screen);
+=======
+    REQUEST_HEAD_STRUCT(xXF86VidModeGetModeLineReq);
+    REQUEST_FIELD_CARD16(screen);
+>>>>>>> 7e1eba12c07 (Xext: vidmode: use REQUEST_HEAD_STRUCT and REQUEST_FIELD_* macros)
 
     ScreenPtr pScreen;
     VidModePtr pVidMode;
@@ -343,11 +348,16 @@ static void fillModeInfoV2(x_rpcbuf_t *rpcbuf, int dotClock,
 static int
 ProcVidModeGetAllModeLines(ClientPtr client)
 {
+<<<<<<< HEAD
     REQUEST(xXF86VidModeGetAllModeLinesReq);
     REQUEST_SIZE_MATCH(xXF86VidModeGetAllModeLinesReq);
 
     if (client->swapped)
         swaps(&stuff->screen);
+=======
+    REQUEST_HEAD_STRUCT(xXF86VidModeGetAllModeLinesReq);
+    REQUEST_FIELD_CARD16(screen);
+>>>>>>> 7e1eba12c07 (Xext: vidmode: use REQUEST_HEAD_STRUCT and REQUEST_FIELD_* macros)
 
     ScreenPtr pScreen;
     VidModePtr pVidMode;
@@ -457,11 +467,24 @@ ProcVidModeAddModeLine(ClientPtr client)
     DEBUG_P("XF86VidModeAddModeline");
 
     if (ClientMajorVersion(client) < 2) {
-        REQUEST(xXF86OldVidModeAddModeLineReq);
-        REQUEST_AT_LEAST_SIZE(xXF86OldVidModeAddModeLineReq);
+        REQUEST_HEAD_AT_LEAST(xXF86OldVidModeAddModeLineReq);
         len =
             client->req_len -
             bytes_to_int32(sizeof(xXF86OldVidModeAddModeLineReq));
+
+        REQUEST_FIELD_CARD32(screen);
+        REQUEST_FIELD_CARD16(hdisplay);
+        REQUEST_FIELD_CARD16(hsyncstart);
+        REQUEST_FIELD_CARD16(hsyncend);
+        REQUEST_FIELD_CARD16(htotal);
+        REQUEST_FIELD_CARD16(vdisplay);
+        REQUEST_FIELD_CARD16(vsyncstart);
+        REQUEST_FIELD_CARD16(vsyncend);
+        REQUEST_FIELD_CARD16(vtotal);
+        REQUEST_FIELD_CARD32(flags);
+        REQUEST_FIELD_CARD32(privsize);
+        REQUEST_REST_CARD32();
+
         if (len != stuff->privsize)
             return BadLength;
 
@@ -495,13 +518,29 @@ ProcVidModeAddModeLine(ClientPtr client)
         return VidModeAddModeLine(client, &newstuff);
     }
     else {
-        REQUEST(xXF86VidModeAddModeLineReq);
-        REQUEST_AT_LEAST_SIZE(xXF86VidModeAddModeLineReq);
+        REQUEST_HEAD_AT_LEAST(xXF86VidModeAddModeLineReq);
         len =
             client->req_len -
             bytes_to_int32(sizeof(xXF86VidModeAddModeLineReq));
+
+        REQUEST_FIELD_CARD16(length);
+        REQUEST_FIELD_CARD32(screen);
+        REQUEST_FIELD_CARD16(hdisplay);
+        REQUEST_FIELD_CARD16(hsyncstart);
+        REQUEST_FIELD_CARD16(hsyncend);
+        REQUEST_FIELD_CARD16(htotal);
+        REQUEST_FIELD_CARD16(hskew);
+        REQUEST_FIELD_CARD16(vdisplay);
+        REQUEST_FIELD_CARD16(vsyncstart);
+        REQUEST_FIELD_CARD16(vsyncend);
+        REQUEST_FIELD_CARD16(vtotal);
+        REQUEST_FIELD_CARD32(flags);
+        REQUEST_FIELD_CARD32(privsize);
+        REQUEST_REST_CARD32();
+
         if (len != stuff->privsize)
             return BadLength;
+
         return VidModeAddModeLine(client, stuff);
     }
 }
@@ -675,8 +714,20 @@ ProcVidModeDeleteModeLine(ClientPtr client)
     DEBUG_P("XF86VidModeDeleteModeline");
 
     if (ClientMajorVersion(client) < 2) {
-        REQUEST(xXF86OldVidModeDeleteModeLineReq);
-        REQUEST_AT_LEAST_SIZE(xXF86OldVidModeDeleteModeLineReq);
+        REQUEST_HEAD_AT_LEAST(xXF86OldVidModeDeleteModeLineReq);
+        REQUEST_FIELD_CARD32(screen);
+        REQUEST_FIELD_CARD16(hdisplay);
+        REQUEST_FIELD_CARD16(hsyncstart);
+        REQUEST_FIELD_CARD16(hsyncend);
+        REQUEST_FIELD_CARD16(htotal);
+        REQUEST_FIELD_CARD16(vdisplay);
+        REQUEST_FIELD_CARD16(vsyncstart);
+        REQUEST_FIELD_CARD16(vsyncend);
+        REQUEST_FIELD_CARD16(vtotal);
+        REQUEST_FIELD_CARD32(flags);
+        REQUEST_FIELD_CARD32(privsize);
+        REQUEST_REST_CARD32();
+
         len =
             client->req_len -
             bytes_to_int32(sizeof(xXF86OldVidModeDeleteModeLineReq));
@@ -709,8 +760,21 @@ ProcVidModeDeleteModeLine(ClientPtr client)
         return VidModeDeleteModeLine(client, &newstuff);
     }
     else {
-        REQUEST(xXF86VidModeDeleteModeLineReq);
-        REQUEST_AT_LEAST_SIZE(xXF86VidModeDeleteModeLineReq);
+        REQUEST_HEAD_AT_LEAST(xXF86VidModeDeleteModeLineReq);
+        REQUEST_FIELD_CARD32(screen);
+        REQUEST_FIELD_CARD16(hdisplay);
+        REQUEST_FIELD_CARD16(hsyncstart);
+        REQUEST_FIELD_CARD16(hsyncend);
+        REQUEST_FIELD_CARD16(htotal);
+        REQUEST_FIELD_CARD16(hskew);
+        REQUEST_FIELD_CARD16(vdisplay);
+        REQUEST_FIELD_CARD16(vsyncstart);
+        REQUEST_FIELD_CARD16(vsyncend);
+        REQUEST_FIELD_CARD16(vtotal);
+        REQUEST_FIELD_CARD32(flags);
+        REQUEST_FIELD_CARD32(privsize);
+        REQUEST_REST_CARD32();
+
         len =
             client->req_len -
             bytes_to_int32(sizeof(xXF86VidModeDeleteModeLineReq));
@@ -853,8 +917,20 @@ ProcVidModeModModeLine(ClientPtr client)
     DEBUG_P("XF86VidModeModModeline");
 
     if (ClientMajorVersion(client) < 2) {
-        REQUEST(xXF86OldVidModeModModeLineReq)
-        REQUEST_AT_LEAST_SIZE(xXF86OldVidModeModModeLineReq);
+        REQUEST_HEAD_AT_LEAST(xXF86OldVidModeModModeLineReq)
+        REQUEST_FIELD_CARD32(screen);
+        REQUEST_FIELD_CARD16(hdisplay);
+        REQUEST_FIELD_CARD16(hsyncstart);
+        REQUEST_FIELD_CARD16(hsyncend);
+        REQUEST_FIELD_CARD16(htotal);
+        REQUEST_FIELD_CARD16(vdisplay);
+        REQUEST_FIELD_CARD16(vsyncstart);
+        REQUEST_FIELD_CARD16(vsyncend);
+        REQUEST_FIELD_CARD16(vtotal);
+        REQUEST_FIELD_CARD32(flags);
+        REQUEST_FIELD_CARD32(privsize);
+        REQUEST_REST_CARD32();
+
         int len =
             client->req_len -
             bytes_to_int32(sizeof(xXF86OldVidModeModModeLineReq));
@@ -880,8 +956,21 @@ ProcVidModeModModeLine(ClientPtr client)
         return VidModeModModeLine(client, &newstuff);
     }
     else {
-        REQUEST(xXF86VidModeModModeLineReq);
-        REQUEST_AT_LEAST_SIZE(xXF86VidModeModModeLineReq);
+        REQUEST_HEAD_AT_LEAST(xXF86VidModeModModeLineReq);
+        REQUEST_FIELD_CARD32(screen);
+        REQUEST_FIELD_CARD16(hdisplay);
+        REQUEST_FIELD_CARD16(hsyncstart);
+        REQUEST_FIELD_CARD16(hsyncend);
+        REQUEST_FIELD_CARD16(htotal);
+        REQUEST_FIELD_CARD16(hskew);
+        REQUEST_FIELD_CARD16(vdisplay);
+        REQUEST_FIELD_CARD16(vsyncstart);
+        REQUEST_FIELD_CARD16(vsyncend);
+        REQUEST_FIELD_CARD16(vtotal);
+        REQUEST_FIELD_CARD32(flags);
+        REQUEST_FIELD_CARD32(privsize);
+        REQUEST_REST_CARD32();
+
         int len =
             client->req_len -
             bytes_to_int32(sizeof(xXF86VidModeModModeLineReq));
@@ -1036,8 +1125,20 @@ ProcVidModeValidateModeLine(ClientPtr client)
     DEBUG_P("XF86VidModeValidateModeline");
 
     if (ClientMajorVersion(client) < 2) {
-        REQUEST(xXF86OldVidModeValidateModeLineReq);
-        REQUEST_AT_LEAST_SIZE(xXF86OldVidModeValidateModeLineReq);
+        REQUEST_HEAD_AT_LEAST(xXF86OldVidModeValidateModeLineReq);
+        REQUEST_FIELD_CARD32(screen);
+        REQUEST_FIELD_CARD16(hdisplay);
+        REQUEST_FIELD_CARD16(hsyncstart);
+        REQUEST_FIELD_CARD16(hsyncend);
+        REQUEST_FIELD_CARD16(htotal);
+        REQUEST_FIELD_CARD16(vdisplay);
+        REQUEST_FIELD_CARD16(vsyncstart);
+        REQUEST_FIELD_CARD16(vsyncend);
+        REQUEST_FIELD_CARD16(vtotal);
+        REQUEST_FIELD_CARD32(flags);
+        REQUEST_FIELD_CARD32(privsize);
+        REQUEST_REST_CARD32();
+
         len = client->req_len -
             bytes_to_int32(sizeof(xXF86OldVidModeValidateModeLineReq));
         if (len != stuff->privsize)
@@ -1062,8 +1163,21 @@ ProcVidModeValidateModeLine(ClientPtr client)
         return VidModeValidateModeLine(client, &newstuff);
     }
     else {
-        REQUEST(xXF86VidModeValidateModeLineReq);
-        REQUEST_AT_LEAST_SIZE(xXF86VidModeValidateModeLineReq);
+        REQUEST_HEAD_AT_LEAST(xXF86VidModeValidateModeLineReq);
+        REQUEST_FIELD_CARD32(screen);
+        REQUEST_FIELD_CARD16(hdisplay);
+        REQUEST_FIELD_CARD16(hsyncstart);
+        REQUEST_FIELD_CARD16(hsyncend);
+        REQUEST_FIELD_CARD16(htotal);
+        REQUEST_FIELD_CARD16(hskew);
+        REQUEST_FIELD_CARD16(vdisplay);
+        REQUEST_FIELD_CARD16(vsyncstart);
+        REQUEST_FIELD_CARD16(vsyncend);
+        REQUEST_FIELD_CARD16(vtotal);
+        REQUEST_FIELD_CARD32(flags);
+        REQUEST_FIELD_CARD32(privsize);
+        REQUEST_REST_CARD32();
+
         len =
             client->req_len -
             bytes_to_int32(sizeof(xXF86VidModeValidateModeLineReq));
@@ -1158,6 +1272,7 @@ VidModeValidateModeLine(ClientPtr client, xXF86VidModeValidateModeLineReq *stuff
 static int
 ProcVidModeSwitchMode(ClientPtr client)
 {
+<<<<<<< HEAD
     REQUEST(xXF86VidModeSwitchModeReq);
     REQUEST_SIZE_MATCH(xXF86VidModeSwitchModeReq);
 
@@ -1165,6 +1280,11 @@ ProcVidModeSwitchMode(ClientPtr client)
         swaps(&stuff->screen);
         swaps(&stuff->zoom);
     }
+=======
+    REQUEST_HEAD_STRUCT(xXF86VidModeSwitchModeReq);
+    REQUEST_FIELD_CARD16(screen);
+    REQUEST_FIELD_CARD16(zoom);
+>>>>>>> 7e1eba12c07 (Xext: vidmode: use REQUEST_HEAD_STRUCT and REQUEST_FIELD_* macros)
 
     ScreenPtr pScreen;
     VidModePtr pVidMode;
@@ -1209,8 +1329,9 @@ ProcVidModeSwitchToMode(ClientPtr client)
         return VidModeErrorBase + XF86VidModeClientNotLocal;
 
     if (ClientMajorVersion(client) < 2) {
-        REQUEST(xXF86OldVidModeSwitchToModeReq);
-        REQUEST_AT_LEAST_SIZE(xXF86OldVidModeSwitchToModeReq);
+        REQUEST_HEAD_AT_LEAST(xXF86OldVidModeSwitchToModeReq);
+        REQUEST_FIELD_CARD32(screen);
+
         len =
             client->req_len -
             bytes_to_int32(sizeof(xXF86OldVidModeSwitchToModeReq));
@@ -1236,8 +1357,9 @@ ProcVidModeSwitchToMode(ClientPtr client)
         return VidModeSwitchToMode(client, &newstuff);
     }
     else {
-        REQUEST(xXF86VidModeSwitchToModeReq);
-        REQUEST_AT_LEAST_SIZE(xXF86VidModeSwitchToModeReq);
+        REQUEST_HEAD_AT_LEAST(xXF86VidModeSwitchToModeReq);
+        REQUEST_FIELD_CARD32(screen);
+
         len =
             client->req_len -
             bytes_to_int32(sizeof(xXF86VidModeSwitchToModeReq));
@@ -1314,6 +1436,7 @@ VidModeSwitchToMode(ClientPtr client, xXF86VidModeSwitchToModeReq *stuff)
 static int
 ProcVidModeLockModeSwitch(ClientPtr client)
 {
+<<<<<<< HEAD
     REQUEST(xXF86VidModeLockModeSwitchReq);
     REQUEST_SIZE_MATCH(xXF86VidModeLockModeSwitchReq);
 
@@ -1321,6 +1444,11 @@ ProcVidModeLockModeSwitch(ClientPtr client)
         swaps(&stuff->screen);
         swaps(&stuff->lock);
     }
+=======
+    REQUEST_HEAD_STRUCT(xXF86VidModeLockModeSwitchReq);
+    REQUEST_FIELD_CARD16(screen);
+    REQUEST_FIELD_CARD16(lock);
+>>>>>>> 7e1eba12c07 (Xext: vidmode: use REQUEST_HEAD_STRUCT and REQUEST_FIELD_* macros)
 
     ScreenPtr pScreen;
     VidModePtr pVidMode;
@@ -1356,11 +1484,16 @@ static inline CARD32 _combine_f(vidMonitorValue a, vidMonitorValue b)
 static int
 ProcVidModeGetMonitor(ClientPtr client)
 {
+<<<<<<< HEAD
     REQUEST(xXF86VidModeGetMonitorReq);
     REQUEST_SIZE_MATCH(xXF86VidModeGetMonitorReq);
 
     if (client->swapped)
         swaps(&stuff->screen);
+=======
+    REQUEST_HEAD_STRUCT(xXF86VidModeGetMonitorReq);
+    REQUEST_FIELD_CARD16(screen);
+>>>>>>> 7e1eba12c07 (Xext: vidmode: use REQUEST_HEAD_STRUCT and REQUEST_FIELD_* macros)
 
     DEBUG_P("XF86VidModeGetMonitor");
 
@@ -1410,11 +1543,16 @@ ProcVidModeGetMonitor(ClientPtr client)
 static int
 ProcVidModeGetViewPort(ClientPtr client)
 {
+<<<<<<< HEAD
     REQUEST(xXF86VidModeGetViewPortReq);
     REQUEST_SIZE_MATCH(xXF86VidModeGetViewPortReq);
 
     if (client->swapped)
         swaps(&stuff->screen);
+=======
+    REQUEST_HEAD_STRUCT(xXF86VidModeGetViewPortReq);
+    REQUEST_FIELD_CARD16(screen);
+>>>>>>> 7e1eba12c07 (Xext: vidmode: use REQUEST_HEAD_STRUCT and REQUEST_FIELD_* macros)
 
     ScreenPtr pScreen;
     VidModePtr pVidMode;
@@ -1448,6 +1586,7 @@ ProcVidModeGetViewPort(ClientPtr client)
 static int
 ProcVidModeSetViewPort(ClientPtr client)
 {
+<<<<<<< HEAD
     REQUEST(xXF86VidModeSetViewPortReq);
     REQUEST_SIZE_MATCH(xXF86VidModeSetViewPortReq);
 
@@ -1456,6 +1595,12 @@ ProcVidModeSetViewPort(ClientPtr client)
         swapl(&stuff->x);
         swapl(&stuff->y);
     }
+=======
+    REQUEST_HEAD_STRUCT(xXF86VidModeSetViewPortReq);
+    REQUEST_FIELD_CARD16(screen);
+    REQUEST_FIELD_CARD32(x);
+    REQUEST_FIELD_CARD32(y);
+>>>>>>> 7e1eba12c07 (Xext: vidmode: use REQUEST_HEAD_STRUCT and REQUEST_FIELD_* macros)
 
     ScreenPtr pScreen;
     VidModePtr pVidMode;
@@ -1483,11 +1628,16 @@ ProcVidModeSetViewPort(ClientPtr client)
 static int
 ProcVidModeGetDotClocks(ClientPtr client)
 {
+<<<<<<< HEAD
     REQUEST(xXF86VidModeGetDotClocksReq);
     REQUEST_SIZE_MATCH(xXF86VidModeGetDotClocksReq);
 
     if (client->swapped)
         swaps(&stuff->screen);
+=======
+    REQUEST_HEAD_STRUCT(xXF86VidModeGetDotClocksReq);
+    REQUEST_FIELD_CARD16(screen);
+>>>>>>> 7e1eba12c07 (Xext: vidmode: use REQUEST_HEAD_STRUCT and REQUEST_FIELD_* macros)
 
     ScreenPtr pScreen;
     VidModePtr pVidMode;
@@ -1541,6 +1691,7 @@ ProcVidModeGetDotClocks(ClientPtr client)
 static int
 ProcVidModeSetGamma(ClientPtr client)
 {
+<<<<<<< HEAD
     REQUEST(xXF86VidModeSetGammaReq);
     REQUEST_SIZE_MATCH(xXF86VidModeSetGammaReq);
 
@@ -1550,6 +1701,13 @@ ProcVidModeSetGamma(ClientPtr client)
         swapl(&stuff->green);
         swapl(&stuff->blue);
     }
+=======
+    REQUEST_HEAD_STRUCT(xXF86VidModeSetGammaReq);
+    REQUEST_FIELD_CARD16(screen);
+    REQUEST_FIELD_CARD32(red);
+    REQUEST_FIELD_CARD32(green);
+    REQUEST_FIELD_CARD32(blue);
+>>>>>>> 7e1eba12c07 (Xext: vidmode: use REQUEST_HEAD_STRUCT and REQUEST_FIELD_* macros)
 
     ScreenPtr pScreen;
     VidModePtr pVidMode;
@@ -1579,11 +1737,8 @@ ProcVidModeSetGamma(ClientPtr client)
 static int
 ProcVidModeGetGamma(ClientPtr client)
 {
-    REQUEST(xXF86VidModeGetGammaReq);
-    REQUEST_SIZE_MATCH(xXF86VidModeGetGammaReq);
-
-    if (client->swapped)
-        swaps(&stuff->screen);
+    REQUEST_HEAD_STRUCT(xXF86VidModeGetGammaReq);
+    REQUEST_FIELD_CARD16(screen);
 
     ScreenPtr pScreen;
     VidModePtr pVidMode;
@@ -1619,16 +1774,13 @@ ProcVidModeGetGamma(ClientPtr client)
 static int
 ProcVidModeSetGammaRamp(ClientPtr client)
 {
-    REQUEST(xXF86VidModeSetGammaRampReq);
-    REQUEST_AT_LEAST_SIZE(xXF86VidModeSetGammaRampReq);
+    REQUEST_HEAD_AT_LEAST(xXF86VidModeSetGammaRampReq);
+    REQUEST_FIELD_CARD16(size);
+    REQUEST_FIELD_CARD16(screen);
 
-    if (client->swapped) {
-        swaps(&stuff->size);
-        swaps(&stuff->screen);
-        int length = ((stuff->size + 1) & ~1) * 6;
-        REQUEST_FIXED_SIZE(xXF86VidModeSetGammaRampReq, length);
-        SwapRestS(stuff);
-    }
+    int l = ((stuff->size + 1) & ~1) * 6;
+    REQUEST_FIXED_SIZE(xXF86VidModeSetGammaRampReq, l);
+    REQUEST_REST_CARD16();
 
     CARD16 *r, *g, *b;
     ScreenPtr pScreen;
@@ -1666,8 +1818,9 @@ ProcVidModeSetGammaRamp(ClientPtr client)
 static int
 ProcVidModeGetGammaRamp(ClientPtr client)
 {
-    REQUEST(xXF86VidModeGetGammaRampReq);
-    REQUEST_SIZE_MATCH(xXF86VidModeGetGammaRampReq);
+    REQUEST_HEAD_STRUCT(xXF86VidModeGetGammaRampReq);
+    REQUEST_FIELD_CARD16(size);
+    REQUEST_FIELD_CARD16(screen);
 
     if (client->swapped) {
         swaps(&stuff->size);
@@ -1718,11 +1871,8 @@ ProcVidModeGetGammaRamp(ClientPtr client)
 static int
 ProcVidModeGetGammaRampSize(ClientPtr client)
 {
-    REQUEST(xXF86VidModeGetGammaRampSizeReq);
-    REQUEST_SIZE_MATCH(xXF86VidModeGetGammaRampSizeReq);
-
-    if (client->swapped)
-        swaps(&stuff->screen);
+    REQUEST_HEAD_STRUCT(xXF86VidModeGetGammaRampSizeReq);
+    REQUEST_FIELD_CARD16(screen);
 
     ScreenPtr pScreen;
     VidModePtr pVidMode;
@@ -1748,8 +1898,8 @@ ProcVidModeGetGammaRampSize(ClientPtr client)
 static int
 ProcVidModeGetPermissions(ClientPtr client)
 {
-    REQUEST(xXF86VidModeGetPermissionsReq);
-    REQUEST_SIZE_MATCH(xXF86VidModeGetPermissionsReq);
+    REQUEST_HEAD_STRUCT(xXF86VidModeGetPermissionsReq);
+    REQUEST_FIELD_CARD16(screen);
 
     if (client->swapped)
         swaps(&stuff->screen);
@@ -1773,13 +1923,9 @@ ProcVidModeGetPermissions(ClientPtr client)
 static int
 ProcVidModeSetClientVersion(ClientPtr client)
 {
-    REQUEST(xXF86VidModeSetClientVersionReq);
-    REQUEST_SIZE_MATCH(xXF86VidModeSetClientVersionReq);
-
-    if (client->swapped) {
-        swaps(&stuff->major);
-        swaps(&stuff->minor);
-    }
+    REQUEST_HEAD_STRUCT(xXF86VidModeSetClientVersionReq);
+    REQUEST_FIELD_CARD16(major);
+    REQUEST_FIELD_CARD16(minor);
 
     VidModePrivPtr pPriv;
 
@@ -1797,6 +1943,7 @@ ProcVidModeSetClientVersion(ClientPtr client)
 
     return Success;
 }
+
 
 static int
 ProcVidModeDispatch(ClientPtr client)
