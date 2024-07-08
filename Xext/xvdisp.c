@@ -31,6 +31,7 @@ SOFTWARE.
 #include <X11/extensions/Xvproto.h>
 
 #include "dix/dix_priv.h"
+#include "dix/request_priv.h"
 #include "dix/rpcbuf_priv.h"
 #include "dix/request_priv.h"
 #include "dix/screenint_priv.h"
@@ -60,8 +61,7 @@ unsigned long XvXRTPort;
 static int
 ProcXvQueryExtension(ClientPtr client)
 {
-    /* REQUEST(xvQueryExtensionReq); */
-    REQUEST_SIZE_MATCH(xvQueryExtensionReq);
+    REQUEST_HEAD_STRUCT(xvQueryExtensionReq);
 
     xvQueryExtensionReply reply = {
         .version = XvVersion,
@@ -79,11 +79,8 @@ ProcXvQueryExtension(ClientPtr client)
 static int
 ProcXvQueryAdaptors(ClientPtr client)
 {
-    REQUEST(xvQueryAdaptorsReq);
-    REQUEST_SIZE_MATCH(xvQueryAdaptorsReq);
-
-    if (client->swapped)
-        swapl(&stuff->window);
+    REQUEST_HEAD_STRUCT(xvQueryAdaptorsReq);
+    REQUEST_FIELD_CARD32(window);
 
     int na, nf, rc;
     XvAdaptorPtr pa;
@@ -145,8 +142,8 @@ ProcXvQueryAdaptors(ClientPtr client)
 static int
 ProcXvQueryEncodings(ClientPtr client)
 {
-    REQUEST(xvQueryEncodingsReq);
-    REQUEST_SIZE_MATCH(xvQueryEncodingsReq);
+    REQUEST_HEAD_STRUCT(xvQueryEncodingsReq);
+    REQUEST_FIELD_CARD32(port);
 
     if (client->swapped)
         swapl(&stuff->port);
@@ -191,7 +188,7 @@ SingleXvPutVideo(ClientPtr client)
     GCPtr pGC;
     int status;
 
-    REQUEST(xvPutVideoReq);
+    REQUEST_HEAD_STRUCT(xvPutVideoReq);
 
     VALIDATE_DRAWABLE_AND_GC(stuff->drawable, pDraw, DixWriteAccess);
     VALIDATE_XV_PORT(stuff->port, pPort, DixReadAccess);
@@ -219,22 +216,18 @@ static int XineramaXvPutVideo(ClientPtr client);
 static int
 ProcXvPutVideo(ClientPtr client)
 {
-    REQUEST(xvPutVideoReq);
-    REQUEST_SIZE_MATCH(xvPutVideoReq);
-
-    if (client->swapped) {
-        swapl(&stuff->port);
-        swapl(&stuff->drawable);
-        swapl(&stuff->gc);
-        swaps(&stuff->vid_x);
-        swaps(&stuff->vid_y);
-        swaps(&stuff->vid_w);
-        swaps(&stuff->vid_h);
-        swaps(&stuff->drw_x);
-        swaps(&stuff->drw_y);
-        swaps(&stuff->drw_w);
-        swaps(&stuff->drw_h);
-    }
+    REQUEST_HEAD_STRUCT(xvPutVideoReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(drawable);
+    REQUEST_FIELD_CARD32(gc);
+    REQUEST_FIELD_CARD16(vid_x);
+    REQUEST_FIELD_CARD16(vid_y);
+    REQUEST_FIELD_CARD16(vid_w);
+    REQUEST_FIELD_CARD16(vid_h);
+    REQUEST_FIELD_CARD16(drw_x);
+    REQUEST_FIELD_CARD16(drw_y);
+    REQUEST_FIELD_CARD16(drw_w);
+    REQUEST_FIELD_CARD16(drw_h);
 
 #ifdef XINERAMA
     if (xvUseXinerama)
@@ -246,12 +239,12 @@ ProcXvPutVideo(ClientPtr client)
 static int
 SingleXvPutStill(ClientPtr client)
 {
+    REQUEST_HEAD_STRUCT(xvPutStillReq);
+
     DrawablePtr pDraw;
     XvPortPtr pPort;
     GCPtr pGC;
     int status;
-
-    REQUEST(xvPutStillReq);
 
     VALIDATE_DRAWABLE_AND_GC(stuff->drawable, pDraw, DixWriteAccess);
     VALIDATE_XV_PORT(stuff->port, pPort, DixReadAccess);
@@ -279,22 +272,18 @@ static int XineramaXvPutStill(ClientPtr client);
 static int
 ProcXvPutStill(ClientPtr client)
 {
-    REQUEST(xvPutStillReq);
-    REQUEST_SIZE_MATCH(xvPutStillReq);
-
-    if (client->swapped) {
-        swapl(&stuff->port);
-        swapl(&stuff->drawable);
-        swapl(&stuff->gc);
-        swaps(&stuff->vid_x);
-        swaps(&stuff->vid_y);
-        swaps(&stuff->vid_w);
-        swaps(&stuff->vid_h);
-        swaps(&stuff->drw_x);
-        swaps(&stuff->drw_y);
-        swaps(&stuff->drw_w);
-        swaps(&stuff->drw_h);
-    }
+    REQUEST_HEAD_STRUCT(xvPutStillReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(drawable);
+    REQUEST_FIELD_CARD32(gc);
+    REQUEST_FIELD_CARD16(vid_x);
+    REQUEST_FIELD_CARD16(vid_y);
+    REQUEST_FIELD_CARD16(vid_w);
+    REQUEST_FIELD_CARD16(vid_h);
+    REQUEST_FIELD_CARD16(drw_x);
+    REQUEST_FIELD_CARD16(drw_y);
+    REQUEST_FIELD_CARD16(drw_w);
+    REQUEST_FIELD_CARD16(drw_h);
 
 #ifdef XINERAMA
     if (xvUseXinerama)
@@ -306,22 +295,18 @@ ProcXvPutStill(ClientPtr client)
 static int
 ProcXvGetVideo(ClientPtr client)
 {
-    REQUEST(xvGetVideoReq);
-    REQUEST_SIZE_MATCH(xvGetVideoReq);
-
-    if (client->swapped) {
-        swapl(&stuff->port);
-        swapl(&stuff->drawable);
-        swapl(&stuff->gc);
-        swaps(&stuff->vid_x);
-        swaps(&stuff->vid_y);
-        swaps(&stuff->vid_w);
-        swaps(&stuff->vid_h);
-        swaps(&stuff->drw_x);
-        swaps(&stuff->drw_y);
-        swaps(&stuff->drw_w);
-        swaps(&stuff->drw_h);
-    }
+    REQUEST_HEAD_STRUCT(xvGetVideoReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(drawable);
+    REQUEST_FIELD_CARD32(gc);
+    REQUEST_FIELD_CARD16(vid_x);
+    REQUEST_FIELD_CARD16(vid_y);
+    REQUEST_FIELD_CARD16(vid_w);
+    REQUEST_FIELD_CARD16(vid_h);
+    REQUEST_FIELD_CARD16(drw_x);
+    REQUEST_FIELD_CARD16(drw_y);
+    REQUEST_FIELD_CARD16(drw_w);
+    REQUEST_FIELD_CARD16(drw_h);
 
     DrawablePtr pDraw;
     XvPortPtr pPort;
@@ -350,22 +335,18 @@ ProcXvGetVideo(ClientPtr client)
 static int
 ProcXvGetStill(ClientPtr client)
 {
-    REQUEST(xvGetStillReq);
-    REQUEST_SIZE_MATCH(xvGetStillReq);
-
-    if (client->swapped) {
-        swapl(&stuff->port);
-        swapl(&stuff->drawable);
-        swapl(&stuff->gc);
-        swaps(&stuff->vid_x);
-        swaps(&stuff->vid_y);
-        swaps(&stuff->vid_w);
-        swaps(&stuff->vid_h);
-        swaps(&stuff->drw_x);
-        swaps(&stuff->drw_y);
-        swaps(&stuff->drw_w);
-        swaps(&stuff->drw_h);
-    }
+    REQUEST_HEAD_STRUCT(xvGetStillReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(drawable);
+    REQUEST_FIELD_CARD32(gc);
+    REQUEST_FIELD_CARD16(vid_x);
+    REQUEST_FIELD_CARD16(vid_y);
+    REQUEST_FIELD_CARD16(vid_w);
+    REQUEST_FIELD_CARD16(vid_h);
+    REQUEST_FIELD_CARD16(drw_x);
+    REQUEST_FIELD_CARD16(drw_y);
+    REQUEST_FIELD_CARD16(drw_w);
+    REQUEST_FIELD_CARD16(drw_h);
 
     DrawablePtr pDraw;
     XvPortPtr pPort;
@@ -397,8 +378,8 @@ ProcXvSelectVideoNotify(ClientPtr client)
     DrawablePtr pDraw;
     int rc;
 
-    REQUEST(xvSelectVideoNotifyReq);
-    REQUEST_SIZE_MATCH(xvSelectVideoNotifyReq);
+    REQUEST_HEAD_STRUCT(xvSelectVideoNotifyReq);
+    REQUEST_FIELD_CARD32(drawable);
 
     if (client->swapped)
         swapl(&stuff->drawable);
@@ -414,11 +395,8 @@ ProcXvSelectVideoNotify(ClientPtr client)
 static int
 ProcXvSelectPortNotify(ClientPtr client)
 {
-    REQUEST(xvSelectPortNotifyReq);
-    REQUEST_SIZE_MATCH(xvSelectPortNotifyReq);
-
-    if (client->swapped)
-        swapl(&stuff->port);
+    REQUEST_HEAD_STRUCT(xvSelectPortNotifyReq);
+    REQUEST_FIELD_CARD32(port);
 
     XvPortPtr pPort;
     VALIDATE_XV_PORT(stuff->port, pPort, DixReadAccess);
@@ -429,13 +407,9 @@ ProcXvSelectPortNotify(ClientPtr client)
 static int
 ProcXvGrabPort(ClientPtr client)
 {
-    REQUEST(xvGrabPortReq);
-    REQUEST_SIZE_MATCH(xvGrabPortReq);
-
-    if (client->swapped) {
-        swapl(&stuff->port);
-        swapl(&stuff->time);
-    }
+    REQUEST_HEAD_STRUCT(xvGrabPortReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(time);
 
     int result, status;
     XvPortPtr pPort;
@@ -457,13 +431,9 @@ ProcXvGrabPort(ClientPtr client)
 static int
 ProcXvUngrabPort(ClientPtr client)
 {
-    REQUEST(xvUngrabPortReq);
-    REQUEST_SIZE_MATCH(xvUngrabPortReq);
-
-    if (client->swapped) {
-        swapl(&stuff->port);
-        swapl(&stuff->time);
-    }
+    REQUEST_HEAD_STRUCT(xvGrabPortReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(time);
 
     XvPortPtr pPort;
     VALIDATE_XV_PORT(stuff->port, pPort, DixReadAccess);
@@ -474,11 +444,13 @@ ProcXvUngrabPort(ClientPtr client)
 static int
 SingleXvStopVideo(ClientPtr client)
 {
+    REQUEST_HEAD_STRUCT(xvStopVideoReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(drawable);
+
     int ret;
     DrawablePtr pDraw;
     XvPortPtr pPort;
-
-    REQUEST(xvStopVideoReq);
 
     VALIDATE_XV_PORT(stuff->port, pPort, DixReadAccess);
 
@@ -514,11 +486,13 @@ ProcXvStopVideo(ClientPtr client)
 static int
 SingleXvSetPortAttribute(ClientPtr client)
 {
+    REQUEST_HEAD_STRUCT(xvSetPortAttributeReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(attribute);
+    REQUEST_FIELD_CARD32(value);
+
     int status;
     XvPortPtr pPort;
-
-    REQUEST(xvSetPortAttributeReq);
-
     VALIDATE_XV_PORT(stuff->port, pPort, DixSetAttrAccess);
 
     if (!ValidAtom(stuff->attribute)) {
@@ -567,8 +541,9 @@ ProcXvGetPortAttribute(ClientPtr client)
     int status;
     XvPortPtr pPort;
 
-    REQUEST(xvGetPortAttributeReq);
-    REQUEST_SIZE_MATCH(xvGetPortAttributeReq);
+    REQUEST_HEAD_STRUCT(xvGetPortAttributeReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(attribute);
 
     VALIDATE_XV_PORT(stuff->port, pPort, DixGetAttrAccess);
 
@@ -597,16 +572,12 @@ ProcXvGetPortAttribute(ClientPtr client)
 static int
 ProcXvQueryBestSize(ClientPtr client)
 {
-    REQUEST(xvQueryBestSizeReq);
-    REQUEST_SIZE_MATCH(xvQueryBestSizeReq);
-
-    if (client->swapped) {
-        swapl(&stuff->port);
-        swaps(&stuff->vid_w);
-        swaps(&stuff->vid_h);
-        swaps(&stuff->drw_w);
-        swaps(&stuff->drw_h);
-    }
+    REQUEST_HEAD_STRUCT(xvQueryBestSizeReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD16(vid_w);
+    REQUEST_FIELD_CARD16(vid_h);
+    REQUEST_FIELD_CARD16(drw_w);
+    REQUEST_FIELD_CARD16(drw_h);
 
     unsigned int actual_width, actual_height;
     XvPortPtr pPort;
@@ -634,11 +605,8 @@ ProcXvQueryBestSize(ClientPtr client)
 static int
 ProcXvQueryPortAttributes(ClientPtr client)
 {
-    REQUEST(xvQueryPortAttributesReq);
-    REQUEST_SIZE_MATCH(xvQueryPortAttributesReq);
-
-    if (client->swapped)
-        swapl(&stuff->port);
+    REQUEST_HEAD_STRUCT(xvQueryPortAttributesReq);
+    REQUEST_FIELD_CARD32(port);
 
     int i;
     XvPortPtr pPort;
@@ -675,14 +643,14 @@ ProcXvQueryPortAttributes(ClientPtr client)
 static int
 SingleXvPutImage(ClientPtr client)
 {
+    REQUEST_HEAD_AT_LEAST(xvPutImageReq);
+
     DrawablePtr pDraw;
     XvPortPtr pPort;
     XvImagePtr pImage = NULL;
     GCPtr pGC;
     int status, i, size;
     CARD16 width, height;
-
-    REQUEST(xvPutImageReq);
 
     VALIDATE_DRAWABLE_AND_GC(stuff->drawable, pDraw, DixWriteAccess);
     VALIDATE_XV_PORT(stuff->port, pPort, DixReadAccess);
@@ -736,25 +704,21 @@ XineramaXvPutImage(ClientPtr client);
 static int
 ProcXvPutImage(ClientPtr client)
 {
-    REQUEST(xvPutImageReq);
-    REQUEST_AT_LEAST_SIZE(xvPutImageReq);
-
-    if (client->swapped) {
-        swapl(&stuff->port);
-        swapl(&stuff->drawable);
-        swapl(&stuff->gc);
-        swapl(&stuff->id);
-        swaps(&stuff->src_x);
-        swaps(&stuff->src_y);
-        swaps(&stuff->src_w);
-        swaps(&stuff->src_h);
-        swaps(&stuff->drw_x);
-        swaps(&stuff->drw_y);
-        swaps(&stuff->drw_w);
-        swaps(&stuff->drw_h);
-        swaps(&stuff->width);
-        swaps(&stuff->height);
-    }
+    REQUEST_HEAD_AT_LEAST(xvPutImageReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(drawable);
+    REQUEST_FIELD_CARD32(gc);
+    REQUEST_FIELD_CARD32(id);
+    REQUEST_FIELD_CARD16(src_x);
+    REQUEST_FIELD_CARD16(src_y);
+    REQUEST_FIELD_CARD16(src_w);
+    REQUEST_FIELD_CARD16(src_h);
+    REQUEST_FIELD_CARD16(drw_x);
+    REQUEST_FIELD_CARD16(drw_y);
+    REQUEST_FIELD_CARD16(drw_w);
+    REQUEST_FIELD_CARD16(drw_h);
+    REQUEST_FIELD_CARD16(width);
+    REQUEST_FIELD_CARD16(height);
 
 #ifdef XINERAMA
     if (xvUseXinerama)
@@ -768,6 +732,8 @@ ProcXvPutImage(ClientPtr client)
 static int
 SingleXvShmPutImage(ClientPtr client)
 {
+    REQUEST_HEAD_STRUCT(xvShmPutImageReq);
+
     ShmDescPtr shmdesc;
     DrawablePtr pDraw;
     XvPortPtr pPort;
@@ -775,8 +741,6 @@ SingleXvShmPutImage(ClientPtr client)
     GCPtr pGC;
     int status, size_needed, i;
     CARD16 width, height;
-
-    REQUEST(xvShmPutImageReq);
 
     VALIDATE_DRAWABLE_AND_GC(stuff->drawable, pDraw, DixWriteAccess);
     VALIDATE_XV_PORT(stuff->port, pPort, DixReadAccess);
@@ -849,28 +813,23 @@ static int
 ProcXvShmPutImage(ClientPtr client)
 {
 #ifdef CONFIG_MITSHM
-
-    REQUEST(xvShmPutImageReq);
-    REQUEST_SIZE_MATCH(xvShmPutImageReq);
-
-    if (client->swapped) {
-        swapl(&stuff->port);
-        swapl(&stuff->drawable);
-        swapl(&stuff->gc);
-        swapl(&stuff->shmseg);
-        swapl(&stuff->id);
-        swapl(&stuff->offset);
-        swaps(&stuff->src_x);
-        swaps(&stuff->src_y);
-        swaps(&stuff->src_w);
-        swaps(&stuff->src_h);
-        swaps(&stuff->drw_x);
-        swaps(&stuff->drw_y);
-        swaps(&stuff->drw_w);
-        swaps(&stuff->drw_h);
-        swaps(&stuff->width);
-        swaps(&stuff->height);
-    }
+    REQUEST_HEAD_STRUCT(xvShmPutImageReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(drawable);
+    REQUEST_FIELD_CARD32(gc);
+    REQUEST_FIELD_CARD32(shmseg);
+    REQUEST_FIELD_CARD32(id);
+    REQUEST_FIELD_CARD32(offset);
+    REQUEST_FIELD_CARD16(src_x);
+    REQUEST_FIELD_CARD16(src_y);
+    REQUEST_FIELD_CARD16(src_w);
+    REQUEST_FIELD_CARD16(src_h);
+    REQUEST_FIELD_CARD16(drw_x);
+    REQUEST_FIELD_CARD16(drw_y);
+    REQUEST_FIELD_CARD16(drw_w);
+    REQUEST_FIELD_CARD16(drw_h);
+    REQUEST_FIELD_CARD16(width);
+    REQUEST_FIELD_CARD16(height);
 
 #ifdef XINERAMA
     if (xvUseXinerama)
@@ -891,15 +850,11 @@ __size_assert(int, sizeof(INT32));
 static int
 ProcXvQueryImageAttributes(ClientPtr client)
 {
-    REQUEST(xvQueryImageAttributesReq);
-    REQUEST_SIZE_MATCH(xvQueryImageAttributesReq);
-
-    if (client->swapped) {
-        swapl(&stuff->port);
-        swapl(&stuff->id);
-        swaps(&stuff->width);
-        swaps(&stuff->height);
-    }
+    REQUEST_HEAD_STRUCT(xvQueryImageAttributesReq);
+    REQUEST_FIELD_CARD32(port);
+    REQUEST_FIELD_CARD32(id);
+    REQUEST_FIELD_CARD16(width);
+    REQUEST_FIELD_CARD16(height);
 
     int size, num_planes, i;
     CARD16 width, height;
@@ -964,11 +919,8 @@ ProcXvQueryImageAttributes(ClientPtr client)
 static int
 ProcXvListImageFormats(ClientPtr client)
 {
-    REQUEST(xvListImageFormatsReq);
-    REQUEST_SIZE_MATCH(xvListImageFormatsReq);
-
-    if (client->swapped)
-        swapl(&stuff->port);
+    REQUEST_HEAD_STRUCT(xvListImageFormatsReq);
+    REQUEST_FIELD_CARD32(port);
 
     XvPortPtr pPort;
     XvImagePtr pImage;
