@@ -48,13 +48,10 @@ from The Open Group.
 static int
 ProcXCMiscGetVersion(ClientPtr client)
 {
-    REQUEST(xXCMiscGetVersionReq);
+    REQUEST_HEAD_STRUCT(xXCMiscGetVersionReq);
     REQUEST_SIZE_MATCH(xXCMiscGetVersionReq);
-
-    if (client->swapped) {
-        swaps(&stuff->majorVersion);
-        swaps(&stuff->minorVersion);
-    }
+    REQUEST_FIELD_CARD16(majorVersion);
+    REQUEST_FIELD_CARD16(minorVersion);
 
     xXCMiscGetVersionReply reply = {
         .majorVersion = XCMiscMajorVersion,
@@ -72,7 +69,7 @@ ProcXCMiscGetVersion(ClientPtr client)
 static int
 ProcXCMiscGetXIDRange(ClientPtr client)
 {
-    REQUEST_SIZE_MATCH(xXCMiscGetXIDRangeReq);
+    REQUEST_HEAD_STRUCT(xXCMiscGetXIDRangeReq);
 
     XID min_id, max_id;
     GetXIDRange(client->index, FALSE, &min_id, &max_id);
@@ -92,8 +89,9 @@ ProcXCMiscGetXIDRange(ClientPtr client)
 static int
 ProcXCMiscGetXIDList(ClientPtr client)
 {
-    REQUEST(xXCMiscGetXIDListReq);
-    REQUEST_SIZE_MATCH(xXCMiscGetXIDListReq);
+    REQUEST_HEAD_STRUCT(xXCMiscGetXIDListReq);
+    REQUEST_FIELD_CARD16(length);
+    REQUEST_FIELD_CARD32(count);
 
     if (client->swapped)
         swapl(&stuff->count);
