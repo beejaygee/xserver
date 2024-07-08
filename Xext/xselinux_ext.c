@@ -110,12 +110,8 @@ SELinuxSendContextReply(ClientPtr client, security_id_t sid)
 static int
 ProcSELinuxSetCreateContext(ClientPtr client, unsigned offset)
 {
-    REQUEST(SELinuxSetCreateContextReq);
-    REQUEST_AT_LEAST_SIZE(SELinuxSetCreateContextReq);
-
-    if (client->swapped)
-        swapl(&stuff->context_len);
-
+    REQUEST_HEAD_AT_LEAST(SELinuxSetCreateContextReq);
+    REQUEST_FIELD_CARD32(context_len);
     REQUEST_FIXED_SIZE(SELinuxSetCreateContextReq, stuff->context_len);
 
     PrivateRec **privPtr = &client->devPrivates;
@@ -151,7 +147,7 @@ ProcSELinuxGetCreateContext(ClientPtr client, unsigned offset)
     security_id_t *pSid;
     char *ptr;
 
-    REQUEST_SIZE_MATCH(SELinuxGetCreateContextReq);
+    REQUEST_HEAD_STRUCT(SELinuxGetCreateContextReq);
 
     if (offset == CTX_DEV)
         ptr = dixLookupPrivate(&serverClient->devPrivates, subjectKey);
@@ -165,13 +161,10 @@ ProcSELinuxGetCreateContext(ClientPtr client, unsigned offset)
 static int
 ProcSELinuxSetDeviceContext(ClientPtr client)
 {
-    REQUEST(SELinuxSetContextReq);
-    REQUEST_AT_LEAST_SIZE(SELinuxSetContextReq);
+    REQUEST_HEAD_AT_LEAST(SELinuxSetContextReq);
 
-    if (client->swapped) {
-        swapl(&stuff->id);
-        swapl(&stuff->context_len);
-    }
+    REQUEST_FIELD_CARD32(id);
+    REQUEST_FIELD_CARD32(context_len);
 
     REQUEST_FIXED_SIZE(SELinuxSetContextReq, stuff->context_len);
 
@@ -212,12 +205,8 @@ ProcSELinuxSetDeviceContext(ClientPtr client)
 static int
 ProcSELinuxGetDeviceContext(ClientPtr client)
 {
-    REQUEST(SELinuxGetContextReq);
-    REQUEST_SIZE_MATCH(SELinuxGetContextReq);
-
-    if (client->swapped) {
-        swapl(&stuff->id);
-    }
+    REQUEST_HEAD_STRUCT(SELinuxGetContextReq);
+    REQUEST_FIELD_CARD32(id);
 
     DeviceIntPtr dev;
     SELinuxSubjectRec *subj;
@@ -234,11 +223,8 @@ ProcSELinuxGetDeviceContext(ClientPtr client)
 static int
 ProcSELinuxGetDrawableContext(ClientPtr client)
 {
-    REQUEST(SELinuxGetContextReq);
-    REQUEST_SIZE_MATCH(SELinuxGetContextReq);
-
-    if (client->swapped)
-        swapl(&stuff->id);
+    REQUEST_HEAD_STRUCT(SELinuxGetContextReq);
+    REQUEST_FIELD_CARD32(id);
 
     DrawablePtr pDraw;
     PrivateRec **privatePtr;
@@ -261,8 +247,9 @@ ProcSELinuxGetDrawableContext(ClientPtr client)
 static int
 ProcSELinuxGetPropertyContext(ClientPtr client, void *privKey)
 {
-    REQUEST(SELinuxGetPropertyContextReq);
-    REQUEST_SIZE_MATCH(SELinuxGetPropertyContextReq);
+    REQUEST_HEAD_STRUCT(SELinuxGetPropertyContextReq);
+    REQUEST_FIELD_CARD32(window);
+    REQUEST_FIELD_CARD32(property);
 
     if (client->swapped) {
         swapl(&stuff->window);
@@ -290,11 +277,8 @@ ProcSELinuxGetPropertyContext(ClientPtr client, void *privKey)
 static int
 ProcSELinuxGetSelectionContext(ClientPtr client, void *privKey)
 {
-    REQUEST(SELinuxGetContextReq);
-    REQUEST_SIZE_MATCH(SELinuxGetContextReq);
-
-    if (client->swapped)
-        swapl(&stuff->id);
+    REQUEST_HEAD_STRUCT(SELinuxGetContextReq);
+    REQUEST_FIELD_CARD32(id);
 
     Selection *pSel;
     SELinuxObjectRec *obj;
@@ -311,8 +295,8 @@ ProcSELinuxGetSelectionContext(ClientPtr client, void *privKey)
 static int
 ProcSELinuxGetClientContext(ClientPtr client)
 {
-    REQUEST(SELinuxGetContextReq);
-    REQUEST_SIZE_MATCH(SELinuxGetContextReq);
+    REQUEST_HEAD_STRUCT(SELinuxGetContextReq);
+    REQUEST_FIELD_CARD32(id);
 
     if (client->swapped)
         swapl(&stuff->id);
@@ -397,11 +381,8 @@ SELinuxSendItemsToClient(ClientPtr client, SELinuxListItemRec * items,
 static int
 ProcSELinuxListProperties(ClientPtr client)
 {
-    REQUEST(SELinuxGetContextReq);
-    REQUEST_SIZE_MATCH(SELinuxGetContextReq);
-
-    if (client->swapped)
-        swapl(&stuff->id);
+    REQUEST_HEAD_STRUCT(SELinuxGetContextReq);
+    REQUEST_FIELD_CARD32(id);
 
     WindowPtr pWin;
     PropertyPtr pProp;
@@ -445,7 +426,7 @@ ProcSELinuxListSelections(ClientPtr client)
     int rc, count, size, i;
     CARD32 id;
 
-    REQUEST_SIZE_MATCH(SELinuxGetCreateContextReq);
+    REQUEST_HEAD_STRUCT(SELinuxGetCreateContextReq);
 
     /* Count the number of selections and allocate items */
     count = 0;
