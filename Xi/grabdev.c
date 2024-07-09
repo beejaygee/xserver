@@ -110,7 +110,11 @@ ProcXGrabDevice(ClientPtr client)
     if (rc != Success)
         return rc;
 
+<<<<<<< HEAD
     return X_SEND_REPLY_SIMPLE(client, rep);
+=======
+    return REPLY_SEND();
+>>>>>>> c633e5a2960 (Xi: use REPLY_*() macros for preparing / sending replies)
 }
 
 /***********************************************************************

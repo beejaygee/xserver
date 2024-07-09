@@ -87,10 +87,8 @@ ProcXGetExtensionVersion(ClientPtr client)
         .present = TRUE
     };
 
-    if (client->swapped) {
-        swaps(&rep.major_version);
-        swaps(&rep.minor_version);
-    }
+    REPLY_FIELD_CARD16(major_version);
+    REPLY_FIELD_CARD16(minor_version);
 
     return X_SEND_REPLY_SIMPLE(client, rep);
 }

@@ -90,9 +90,7 @@ ProcXIGetFocus(ClientPtr client)
     else
         rep.focus = dev->focus->win->drawable.id;
 
-    if (client->swapped) {
-        swapl(&rep.focus);
-    }
+    REPLY_FIELD_CARD32(focus);
 
     return X_SEND_REPLY_SIMPLE(client, rep);
 }

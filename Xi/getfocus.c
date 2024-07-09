@@ -101,10 +101,8 @@ ProcXGetDeviceFocus(ClientPtr client)
     else
         rep.focus = focus->win->drawable.id;
 
-    if (client->swapped) {
-        swapl(&rep.focus);
-        swapl(&rep.time);
-    }
+    REPLY_FIELD_CARD32(focus);
+    REPLY_FIELD_CARD32(time);
 
     return X_SEND_REPLY_SIMPLE(client, rep);
 }
