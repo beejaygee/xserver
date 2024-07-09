@@ -232,10 +232,9 @@ ProcDamageQueryVersion(ClientPtr client)
     }
     pDamageClient->major_version = rep.majorVersion;
     pDamageClient->minor_version = rep.minorVersion;
-    if (client->swapped) {
-        swapl(&rep.majorVersion);
-        swapl(&rep.minorVersion);
-    }
+
+    REPLY_FIELD_CARD32(majorVersion);
+    REPLY_FIELD_CARD32(minorVersion);
 
     return X_SEND_REPLY_SIMPLE(client, rep);
 }
