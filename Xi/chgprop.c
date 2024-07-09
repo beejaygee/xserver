@@ -57,6 +57,7 @@ SOFTWARE.
 
 #include "dix/dix_priv.h"
 #include "dix/exevents_priv.h"
+#include "dix/request_priv.h"
 #include "Xi/handlers.h"
 
 #include "inputstr.h"           /* DeviceIntPtr      */
@@ -74,19 +75,12 @@ SOFTWARE.
 int
 ProcXChangeDeviceDontPropagateList(ClientPtr client)
 {
-    REQUEST(xChangeDeviceDontPropagateListReq);
-    REQUEST_AT_LEAST_SIZE(xChangeDeviceDontPropagateListReq);
-
-    if (client->swapped) {
-        swapl(&stuff->window);
-        swaps(&stuff->count);
-    }
-
+    REQUEST_HEAD_AT_LEAST(xChangeDeviceDontPropagateListReq);
+    REQUEST_FIELD_CARD32(window);
+    REQUEST_FIELD_CARD16(count);
     REQUEST_FIXED_SIZE(xChangeDeviceDontPropagateListReq,
                        stuff->count * sizeof(CARD32));
-
-    if (client->swapped)
-        SwapLongs((CARD32 *) (&stuff[1]), stuff->count);
+    REQUEST_BUF_CARD32(&stuff[1], stuff->count);
 
     int i, rc;
     WindowPtr pWin;

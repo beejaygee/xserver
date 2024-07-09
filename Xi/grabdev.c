@@ -76,21 +76,11 @@ extern int ExtEventIndex;
 int
 ProcXGrabDevice(ClientPtr client)
 {
-    REQUEST(xGrabDeviceReq);
-    REQUEST_AT_LEAST_SIZE(xGrabDeviceReq);
-
-    if (client->swapped) {
-        swapl(&stuff->grabWindow);
-        swapl(&stuff->time);
-        swaps(&stuff->event_count);
-    }
-
-    if (client->req_len !=
-        bytes_to_int32(sizeof(xGrabDeviceReq)) + stuff->event_count)
-        return BadLength;
-
-    if (client->swapped)
-        SwapLongs((CARD32 *) (&stuff[1]), stuff->event_count);
+    REQUEST_HEAD_AT_LEAST(xGrabDeviceReq);
+    REQUEST_FIELD_CARD32(grabWindow);
+    REQUEST_FIELD_CARD32(time);
+    REQUEST_FIELD_CARD16(event_count);
+    REQUEST_BUF_CARD32(&stuff[1], stuff->event_count);
 
     int rc;
     DeviceIntPtr dev;

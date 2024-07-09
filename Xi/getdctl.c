@@ -109,8 +109,8 @@ ProcXGetDeviceControl(ClientPtr client)
 {
     DeviceIntPtr dev;
 
-    REQUEST(xGetDeviceControlReq);
-    REQUEST_SIZE_MATCH(xGetDeviceControlReq);
+    REQUEST_HEAD_STRUCT(xGetDeviceControlReq);
+    REQUEST_FIELD_CARD16(control);
 
     int rc = dixLookupDevice(&dev, stuff->deviceid, client, DixGetAttrAccess);
     if (rc != Success)

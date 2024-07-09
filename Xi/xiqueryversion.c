@@ -56,10 +56,11 @@ extern XExtensionVersion XIVersion;     /* defined in getvers.c */
 int
 ProcXIQueryVersion(ClientPtr client)
 {
-    int major, minor;
+    REQUEST_HEAD_AT_LEAST(xXIQueryVersionReq);
+    REQUEST_FIELD_CARD16(major_version);
+    REQUEST_FIELD_CARD16(minor_version);
 
-    REQUEST(xXIQueryVersionReq);
-    REQUEST_SIZE_MATCH(xXIQueryVersionReq);
+    int major, minor;
 
     /* This request only exists after XI2 */
     if (stuff->major_version < 2) {
@@ -125,16 +126,4 @@ ProcXIQueryVersion(ClientPtr client)
     }
 
     return X_SEND_REPLY_SIMPLE(client, rep);
-}
-
-/* Swapping routines */
-
-int _X_COLD
-SProcXIQueryVersion(ClientPtr client)
-{
-    REQUEST(xXIQueryVersionReq);
-    REQUEST_AT_LEAST_SIZE(xXIQueryVersionReq);
-    swaps(&stuff->major_version);
-    swaps(&stuff->minor_version);
-    return (ProcXIQueryVersion(client));
 }

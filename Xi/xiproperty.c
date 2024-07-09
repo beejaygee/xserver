@@ -842,8 +842,7 @@ static int _writeDevProps(x_rpcbuf_t *rpcbuf, XID devId,
 int
 ProcXListDeviceProperties(ClientPtr client)
 {
-    REQUEST(xListDevicePropertiesReq);
-    REQUEST_SIZE_MATCH(xListDevicePropertiesReq);
+    REQUEST_HEAD_STRUCT(xListDevicePropertiesReq);
 
     x_rpcbuf_t rpcbuf = { .swapped = client->swapped, .err_clear = TRUE };
 
@@ -867,14 +866,10 @@ ProcXListDeviceProperties(ClientPtr client)
 int
 ProcXChangeDeviceProperty(ClientPtr client)
 {
-    REQUEST(xChangeDevicePropertyReq);
-    REQUEST_AT_LEAST_SIZE(xChangeDevicePropertyReq);
-
-    if (client->swapped) {
-        swapl(&stuff->property);
-        swapl(&stuff->type);
-        swapl(&stuff->nUnits);
-    }
+    REQUEST_HEAD_AT_LEAST(xChangeDevicePropertyReq);
+    REQUEST_FIELD_CARD32(property);
+    REQUEST_FIELD_CARD32(type);
+    REQUEST_FIELD_CARD32(nUnits);
 
     DeviceIntPtr dev;
     unsigned long len;
@@ -907,11 +902,8 @@ ProcXChangeDeviceProperty(ClientPtr client)
 int
 ProcXDeleteDeviceProperty(ClientPtr client)
 {
-    REQUEST(xDeleteDevicePropertyReq);
-    REQUEST_SIZE_MATCH(xDeleteDevicePropertyReq);
-
-    if (client->swapped)
-        swapl(&stuff->property);
+    REQUEST_HEAD_STRUCT(xDeleteDevicePropertyReq);
+    REQUEST_FIELD_CARD32(property);
 
     DeviceIntPtr dev;
     int rc;
@@ -933,15 +925,11 @@ ProcXDeleteDeviceProperty(ClientPtr client)
 int
 ProcXGetDeviceProperty(ClientPtr client)
 {
-    REQUEST(xGetDevicePropertyReq);
-    REQUEST_SIZE_MATCH(xGetDevicePropertyReq);
-
-    if (client->swapped) {
-        swapl(&stuff->property);
-        swapl(&stuff->type);
-        swapl(&stuff->longOffset);
-        swapl(&stuff->longLength);
-    }
+    REQUEST_HEAD_STRUCT(xGetDevicePropertyReq);
+    REQUEST_FIELD_CARD32(property);
+    REQUEST_FIELD_CARD32(type);
+    REQUEST_FIELD_CARD32(longOffset);
+    REQUEST_FIELD_CARD32(longLength);
 
     DeviceIntPtr dev;
     int length;
@@ -1018,13 +1006,22 @@ ProcXGetDeviceProperty(ClientPtr client)
 int
 ProcXIListProperties(ClientPtr client)
 {
-    REQUEST(xXIListPropertiesReq);
-    REQUEST_SIZE_MATCH(xXIListPropertiesReq);
+    REQUEST_HEAD_STRUCT(xXIListPropertiesReq);
+    REQUEST_FIELD_CARD16(deviceid);
 
     if (client->swapped)
         swaps(&stuff->deviceid);
 
     x_rpcbuf_t rpcbuf = { .swapped = client->swapped, .err_clear = TRUE };
+
+    Atom *atoms;
+    int natoms;
+    DeviceIntPtr dev;
+    int rc = Success;
+
+    rc = dixLookupDevice(&dev, stuff->deviceid, client, DixListPropAccess);
+    if (rc != Success)
+        return rc;
 
     size_t natoms = 0;
     int rc = _writeDevProps(&rpcbuf, stuff->deviceid, client, &natoms);
@@ -1046,15 +1043,11 @@ ProcXIListProperties(ClientPtr client)
 int
 ProcXIChangeProperty(ClientPtr client)
 {
-    REQUEST(xXIChangePropertyReq);
-    REQUEST_AT_LEAST_SIZE(xXIChangePropertyReq);
-
-    if (client->swapped) {
-        swaps(&stuff->deviceid);
-        swapl(&stuff->property);
-        swapl(&stuff->type);
-        swapl(&stuff->num_items);
-    }
+    REQUEST_HEAD_AT_LEAST(xXIChangePropertyReq);
+    REQUEST_FIELD_CARD16(deviceid);
+    REQUEST_FIELD_CARD32(property);
+    REQUEST_FIELD_CARD32(type);
+    REQUEST_FIELD_CARD32(num_items);
 
     int rc;
     DeviceIntPtr dev;
@@ -1087,13 +1080,9 @@ ProcXIChangeProperty(ClientPtr client)
 int
 ProcXIDeleteProperty(ClientPtr client)
 {
-    REQUEST(xXIDeletePropertyReq);
-    REQUEST_SIZE_MATCH(xXIDeletePropertyReq);
-
-    if (client->swapped) {
-        swaps(&stuff->deviceid);
-        swapl(&stuff->property);
-    }
+    REQUEST_HEAD_STRUCT(xXIDeletePropertyReq);
+    REQUEST_FIELD_CARD16(deviceid);
+    REQUEST_FIELD_CARD32(property);
 
     DeviceIntPtr dev;
     int rc;
@@ -1115,16 +1104,13 @@ ProcXIDeleteProperty(ClientPtr client)
 int
 ProcXIGetProperty(ClientPtr client)
 {
-    REQUEST(xXIGetPropertyReq);
-    REQUEST_SIZE_MATCH(xXIGetPropertyReq);
+    REQUEST_HEAD_STRUCT(xXIGetPropertyReq);
 
-    if (client->swapped) {
-        swaps(&stuff->deviceid);
-        swapl(&stuff->property);
-        swapl(&stuff->type);
-        swapl(&stuff->offset);
-        swapl(&stuff->len);
-    }
+    REQUEST_FIELD_CARD16(deviceid);
+    REQUEST_FIELD_CARD32(property);
+    REQUEST_FIELD_CARD32(type);
+    REQUEST_FIELD_CARD32(offset);
+    REQUEST_FIELD_CARD32(len);
 
     DeviceIntPtr dev;
     int length;

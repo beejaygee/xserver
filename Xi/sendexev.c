@@ -56,6 +56,7 @@ SOFTWARE.
 #include <X11/extensions/XIproto.h>
 
 #include "dix/exevents_priv.h"
+#include "dix/request_priv.h"
 #include "Xi/handlers.h"
 
 #include "inputstr.h"           /* DeviceIntPtr      */
@@ -75,13 +76,9 @@ extern int lastEvent;           /* Defined in extension.c */
 int
 ProcXSendExtensionEvent(ClientPtr client)
 {
-    REQUEST(xSendExtensionEventReq);
-    REQUEST_AT_LEAST_SIZE(xSendExtensionEventReq);
-
-    if (client->swapped) {
-        swapl(&stuff->destination);
-        swaps(&stuff->count);
-    }
+    REQUEST_HEAD_AT_LEAST(xSendExtensionEventReq);
+    REQUEST_FIELD_CARD32(destination);
+    REQUEST_FIELD_CARD16(count);
 
     if (client->req_len !=
         bytes_to_int32(sizeof(xSendExtensionEventReq)) + stuff->count +

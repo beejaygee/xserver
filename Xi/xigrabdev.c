@@ -48,16 +48,12 @@
 int
 ProcXIGrabDevice(ClientPtr client)
 {
-    REQUEST(xXIGrabDeviceReq);
-    REQUEST_AT_LEAST_SIZE(xXIGrabDeviceReq);
-
-    if (client->swapped) {
-        swaps(&stuff->deviceid);
-        swapl(&stuff->grab_window);
-        swapl(&stuff->cursor);
-        swapl(&stuff->time);
-        swaps(&stuff->mask_len);
-    }
+    REQUEST_HEAD_AT_LEAST(xXIGrabDeviceReq);
+    REQUEST_FIELD_CARD16(deviceid);
+    REQUEST_FIELD_CARD32(grab_window);
+    REQUEST_FIELD_CARD32(cursor);
+    REQUEST_FIELD_CARD32(time);
+    REQUEST_FIELD_CARD16(mask_len);
 
     DeviceIntPtr dev;
     int ret = Success;
@@ -125,13 +121,9 @@ ProcXIGrabDevice(ClientPtr client)
 int
 ProcXIUngrabDevice(ClientPtr client)
 {
-    REQUEST(xXIUngrabDeviceReq);
-    REQUEST_SIZE_MATCH(xXIUngrabDeviceReq);
-
-    if (client->swapped) {
-        swaps(&stuff->deviceid);
-        swapl(&stuff->time);
-    }
+    REQUEST_HEAD_STRUCT(xXIUngrabDeviceReq);
+    REQUEST_FIELD_CARD16(deviceid);
+    REQUEST_FIELD_CARD32(time);
 
     DeviceIntPtr dev;
     GrabPtr grab;

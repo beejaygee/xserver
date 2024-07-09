@@ -75,15 +75,10 @@ SOFTWARE.
 int
 ProcXChangeDeviceControl(ClientPtr client)
 {
-    REQUEST(xChangeDeviceControlReq);
+    REQUEST_HEAD_AT_LEAST(xChangeDeviceControlReq);
     REQUEST_AT_LEAST_EXTRA_SIZE(xChangeDeviceControlReq, sizeof(xDeviceCtl));
-
-    if (client->swapped) {
-        swaps(&stuff->control);
-        xDeviceCtl *ctl = (xDeviceCtl *) &stuff[1];
-        swaps(&ctl->control);
-        swaps(&ctl->length);
-    }
+    REQUEST_FIELD_CARD16(control);
+    CLIENT_STRUCT_CARD16_2((xDeviceCtl*)&stuff[1], control, length);
 
     unsigned len;
     int i, status, ret = BadValue;
