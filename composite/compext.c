@@ -103,8 +103,9 @@ FreeCompositeClientOverlay(void *value, XID ccwid)
 static int
 ProcCompositeQueryVersion(ClientPtr client)
 {
-    REQUEST(xCompositeQueryVersionReq);
-    REQUEST_SIZE_MATCH(xCompositeQueryVersionReq);
+    REQUEST_HEAD_STRUCT(xCompositeQueryVersionReq);
+    REQUEST_FIELD_CARD32(majorVersion);
+    REQUEST_FIELD_CARD32(minorVersion);
 
     if (client->swapped) {
         swapl(&stuff->majorVersion);
@@ -192,8 +193,11 @@ SingleCompositeUnredirectSubwindows(ClientPtr client, xCompositeUnredirectSubwin
 static int
 ProcCompositeCreateRegionFromBorderClip(ClientPtr client)
 {
-    REQUEST(xCompositeCreateRegionFromBorderClipReq);
-    REQUEST_SIZE_MATCH(xCompositeCreateRegionFromBorderClipReq);
+    REQUEST_HEAD_STRUCT(xCompositeCreateRegionFromBorderClipReq);
+    REQUEST_FIELD_CARD32(region);
+    REQUEST_FIELD_CARD32(window);
+
+    WindowPtr pWin;
 
     if (client->swapped) {
         swapl(&stuff->region);
@@ -464,8 +468,8 @@ CompositeExtensionInit(void)
 static int
 ProcCompositeRedirectWindow(ClientPtr client)
 {
-    REQUEST(xCompositeRedirectWindowReq);
-    REQUEST_SIZE_MATCH(xCompositeRedirectWindowReq);
+    REQUEST_HEAD_STRUCT(xCompositeRedirectWindowReq);
+    REQUEST_FIELD_CARD32(window);
 
     if (client->swapped)
         swapl(&stuff->window);
@@ -499,8 +503,8 @@ ProcCompositeRedirectWindow(ClientPtr client)
 static int
 ProcCompositeRedirectSubwindows(ClientPtr client)
 {
-    REQUEST(xCompositeRedirectSubwindowsReq);
-    REQUEST_SIZE_MATCH(xCompositeRedirectSubwindowsReq);
+    REQUEST_HEAD_STRUCT(xCompositeRedirectSubwindowsReq);
+    REQUEST_FIELD_CARD32(window);
 
     if (client->swapped)
         swapl(&stuff->window);
@@ -534,8 +538,8 @@ ProcCompositeRedirectSubwindows(ClientPtr client)
 static int
 ProcCompositeUnredirectWindow(ClientPtr client)
 {
-    REQUEST(xCompositeUnredirectWindowReq);
-    REQUEST_SIZE_MATCH(xCompositeUnredirectWindowReq);
+    REQUEST_HEAD_STRUCT(xCompositeUnredirectWindowReq);
+    REQUEST_FIELD_CARD32(window);
 
     if (client->swapped)
         swapl(&stuff->window);
@@ -569,8 +573,8 @@ ProcCompositeUnredirectWindow(ClientPtr client)
 static int
 ProcCompositeUnredirectSubwindows(ClientPtr client)
 {
-    REQUEST(xCompositeUnredirectSubwindowsReq);
-    REQUEST_SIZE_MATCH(xCompositeUnredirectSubwindowsReq);
+    REQUEST_HEAD_STRUCT(xCompositeUnredirectSubwindowsReq);
+    REQUEST_FIELD_CARD32(window);
 
     if (client->swapped)
         swapl(&stuff->window);
@@ -604,8 +608,9 @@ ProcCompositeUnredirectSubwindows(ClientPtr client)
 static int
 ProcCompositeNameWindowPixmap(ClientPtr client)
 {
-    REQUEST(xCompositeNameWindowPixmapReq);
-    REQUEST_SIZE_MATCH(xCompositeNameWindowPixmapReq);
+    REQUEST_HEAD_STRUCT(xCompositeNameWindowPixmapReq);
+    REQUEST_FIELD_CARD32(window);
+    REQUEST_FIELD_CARD32(pixmap);
 
     if (client->swapped) {
         swapl(&stuff->window);
@@ -682,8 +687,8 @@ ProcCompositeNameWindowPixmap(ClientPtr client)
 static int
 ProcCompositeGetOverlayWindow(ClientPtr client)
 {
-    REQUEST(xCompositeGetOverlayWindowReq);
-    REQUEST_SIZE_MATCH(xCompositeGetOverlayWindowReq);
+    REQUEST_HEAD_STRUCT(xCompositeGetOverlayWindowReq);
+    REQUEST_FIELD_CARD32(window);
 
     if (client->swapped)
         swapl(&stuff->window);
@@ -785,8 +790,8 @@ ProcCompositeGetOverlayWindow(ClientPtr client)
 static int
 ProcCompositeReleaseOverlayWindow(ClientPtr client)
 {
-    REQUEST(xCompositeReleaseOverlayWindowReq);
-    REQUEST_SIZE_MATCH(xCompositeReleaseOverlayWindowReq);
+    REQUEST_HEAD_STRUCT(xCompositeReleaseOverlayWindowReq);
+    REQUEST_FIELD_CARD32(window);
 
     if (client->swapped)
         swapl(&stuff->window);
