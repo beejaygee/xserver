@@ -636,9 +636,7 @@ ProcDbeGetVisualInfo(ClientPtr client)
         .m = count
     };
 
-    if (client->swapped) {
-        swapl(&rep.m);
-    }
+    REPLY_FIELD_CARD32(m);
 
     rc = X_SEND_REPLY_WITH_RPCBUF(client, rep, rpcbuf);
 
@@ -686,9 +684,7 @@ ProcDbeGetBackBufferAttributes(ClientPtr client)
         rep.attributes = None;
     }
 
-    if (client->swapped) {
-        swapl(&rep.attributes);
-    }
+    REPLY_FIELD_CARD32(attributes);
 
     return X_SEND_REPLY_SIMPLE(client, rep);
 }
