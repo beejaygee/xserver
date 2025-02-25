@@ -35,7 +35,7 @@ extern _X_EXPORT void fbdevHWSave(ScrnInfoPtr pScrn);
 extern _X_EXPORT void fbdevHWRestore(ScrnInfoPtr pScrn);
 
 extern _X_EXPORT void fbdevHWLoadPalette(ScrnInfoPtr pScrn, int numColors,
-                                         int *indices, struct _CMAP_LOCO * colors,
+                                         int *indices, LOCO * colors,
                                          VisualPtr pVisual);
 
 extern _X_EXPORT ModeStatus fbdevHWValidMode(ScrnInfoPtr pScrn, DisplayModePtr mode,
