@@ -22,6 +22,8 @@
 #include <sys/mkdev.h>          /* for minor() on Solaris */
 #endif
 
+#include "dix/colormap_priv.h"
+
 #include "xf86.h"
 #include "xf86Modes.h"
 #include "xf86_OSproc.h"

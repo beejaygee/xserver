@@ -9,6 +9,8 @@
 #define FBDEVHW_TEXT			3       /* Text/attributes      */
 #define FBDEVHW_VGA_PLANES		4       /* EGA/VGA planes       */
 
+struct _CMAP_LOCO;
+
 extern _X_EXPORT Bool fbdevHWProbe(struct pci_device *pPci, const char *device,
                                    char **namep);
 extern _X_EXPORT Bool fbdevHWInit(ScrnInfoPtr pScrn, struct pci_device *pPci,
@@ -33,7 +35,7 @@ extern _X_EXPORT void fbdevHWSave(ScrnInfoPtr pScrn);
 extern _X_EXPORT void fbdevHWRestore(ScrnInfoPtr pScrn);
 
 extern _X_EXPORT void fbdevHWLoadPalette(ScrnInfoPtr pScrn, int numColors,
-                                         int *indices, LOCO * colors,
+                                         int *indices, struct _CMAP_LOCO * colors,
                                          VisualPtr pVisual);
 
 extern _X_EXPORT ModeStatus fbdevHWValidMode(ScrnInfoPtr pScrn, DisplayModePtr mode,
