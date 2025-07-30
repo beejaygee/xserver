@@ -120,7 +120,6 @@ static int ReopenFail(XtransConnInfo ciptr _X_UNUSED, int fd _X_UNUSED,
     return 0;
 }
 
-#if XTRANS_SEND_FDS
 static int _XSERVTransLocalRecvFdInvalid(XtransConnInfo ciptr)
 {
     errno = EINVAL;
@@ -132,8 +131,6 @@ static int LocalSendFdInvalid(XtransConnInfo ciptr, int fd, int do_close)
     errno = EINVAL;
     return -1;
 }
-#endif
-
 
 static int _XSERVTransFillAddrInfo(XtransConnInfo ciptr,
                     const char *sun_path, const char *peer_sun_path)
@@ -831,10 +828,8 @@ static Xtransport _XSERVTransLocalFuncs = {
 	_XSERVTransLocalBytesReadable,
 	_XSERVTransLocalRead,
 	_XSERVTransLocalWrite,
-#if XTRANS_SEND_FDS
 	_XSERVTransLocalSendFdInvalid,
 	_XSERVTransLocalRecvFdInvalid,
-#endif
 	_XSERVTransLocalDisconnect,
 	_XSERVTransLocalClose,
 	_XSERVTransLocalCloseForCloning,
@@ -857,10 +852,8 @@ static Xtransport _XSERVTransNAMEDFuncs = {
 	_XSERVTransLocalBytesReadable,
 	_XSERVTransLocalRead,
 	_XSERVTransLocalWrite,
-#if XTRANS_SEND_FDS
 	_XSERVTransLocalSendFdInvalid,
 	_XSERVTransLocalRecvFdInvalid,
-#endif
 	_XSERVTransLocalDisconnect,
 	_XSERVTransLocalClose,
 	_XSERVTransLocalCloseForCloning,
@@ -880,10 +873,8 @@ static Xtransport _XSERVTransPIPEFuncs = {
 	_XSERVTransLocalBytesReadable,
 	_XSERVTransLocalRead,
 	_XSERVTransLocalWrite,
-#if XTRANS_SEND_FDS
 	_XSERVTransLocalSendFdInvalid,
 	_XSERVTransLocalRecvFdInvalid,
-#endif
 	_XSERVTransLocalDisconnect,
 	_XSERVTransLocalClose,
 	_XSERVTransLocalCloseForCloning,
