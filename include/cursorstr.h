@@ -80,7 +80,11 @@ typedef struct _Cursor {
     Atom name;
 } CursorRec;
 
+<<<<<<< HEAD
 #define CURSOR_REC_SIZE (sizeof(CursorRec) + (size_t)dixPrivatesSize(PRIVATE_CURSOR))
+=======
+#define CURSOR_REC_SIZE (sizeof(CursorRec) + (unsigned int)dixPrivatesSize(PRIVATE_CURSOR))
+>>>>>>> 3bdc69db04 (dix: fix int type mismatch on CURSOR_REC_SIZE and CURSOR_BITS_SIZE)
 
 typedef struct _CursorMetric {
     unsigned short width, height, xhot, yhot;
