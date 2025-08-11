@@ -141,6 +141,7 @@ PanoramiXCreateWindow(ClientPtr client)
     XINERAMA_FOR_EACH_SCREEN_BACKWARD({
         stuff->wid = newWin->info[walkScreenIdx].id;
         stuff->parent = parent->info[walkScreenIdx].id;
+
         if (parentIsRoot) {
             stuff->x = orig_x - walkScreen->x;
             stuff->y = orig_y - walkScreen->y;
@@ -1222,6 +1223,7 @@ PanoramiXCopyArea(ClientPtr client)
 
         XINERAMA_FOR_EACH_SCREEN_BACKWARD({
             RegionPtr pRgn;
+            ScreenPtr pScreen = dixGetScreenPtr(j);
 
             stuff->dstDrawable = dst->info[walkScreenIdx].id;
             stuff->srcDrawable = src->info[walkScreenIdx].id;
@@ -1333,6 +1335,7 @@ PanoramiXCopyPlane(ClientPtr client)
 
     XINERAMA_FOR_EACH_SCREEN_BACKWARD({
         RegionPtr pRgn;
+        ScreenPtr pScreen = dixGetScreenPtr(j);
 
         stuff->dstDrawable = dst->info[walkScreenIdx].id;
         stuff->srcDrawable = src->info[walkScreenIdx].id;
@@ -1427,7 +1430,7 @@ PanoramiXPolyPoint(ClientPtr client)
         memcpy((char *) origPts, (char *) &stuff[1], npoint * sizeof(xPoint));
 
         XINERAMA_FOR_EACH_SCREEN_FORWARD({
-            if (walkScreenIdx)
+            if (walkScreenIdx) /* not on first screen */
                 memcpy(&stuff[1], origPts, npoint * sizeof(xPoint));
 
             if (isRoot) {
@@ -1494,7 +1497,7 @@ PanoramiXPolyLine(ClientPtr client)
         memcpy((char *) origPts, (char *) &stuff[1], npoint * sizeof(xPoint));
 
         XINERAMA_FOR_EACH_SCREEN_FORWARD({
-            if (walkScreenIdx)
+            if (walkScreenIdx) /* not on first screen */
                 memcpy(&stuff[1], origPts, npoint * sizeof(xPoint));
 
             if (isRoot) {
