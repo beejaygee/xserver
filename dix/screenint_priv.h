@@ -9,6 +9,7 @@
 #include <X11/Xdefs.h>
 
 #include "screenint.h"
+#include "include/scrnintstr.h"
 
 typedef Bool (*ScreenInitProcPtr)(ScreenPtr pScreen, int argc, char **argv);
 
@@ -22,5 +23,12 @@ void DetachUnboundGPU(ScreenPtr unbound);
 
 void AttachOffloadGPU(ScreenPtr pScreen, ScreenPtr newScreen);
 void DetachOffloadGPU(ScreenPtr slave);
+
+static inline ScreenPtr GetScreenPtr(unsigned int id)
+{
+    if (id < screenInfo.numScreens)
+        return screenInfo.screens[id];
+    return NULL;
+}
 
 #endif /* _XSERVER_DIX_SCREENINT_PRIV_H */
