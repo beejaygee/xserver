@@ -3,6 +3,10 @@
 
 SOURCE_DIR=`pwd`
 
+pkg_dir() {
+    echo -n "${X11_DEPS_DIR}/$1"
+}
+
 clone_source() {
     local pkgname="$1"
     local url="$2"
@@ -26,7 +30,7 @@ build_meson() {
     else
         clone_source "$pkgname" "$url" "$ref"
         (
-            cd $pkgname
+            cd $pkgdir
             meson "$@" build -Dprefix=$X11_PREFIX
             ninja -j${FDO_CI_CONCURRENT:-4} -C build install
         )
@@ -46,7 +50,7 @@ build_ac() {
     else
         clone_source "$pkgname" "$url" "$ref"
         (
-            cd $pkgname
+            cd $pkgdir
             ./autogen.sh --prefix=$X11_PREFIX
             make -j${FDO_CI_CONCURRENT:-4} install
         )
@@ -63,7 +67,7 @@ build_drv_ac() {
     shift || true
     clone_source "$pkgname" "$url" "$ref"
     (
-        cd $pkgname
+        cd $pkgdir
         ./autogen.sh # --prefix=$X11_PREFIX
         make -j${FDO_CI_CONCURRENT:-4} # install
     )
@@ -82,7 +86,7 @@ build_ac_xts() {
         echo "::group::Build XTS"
         clone_source "$pkgname" "$url" "$ref"
         (
-            cd $pkgname
+            cd $pkgdir
             CFLAGS='-fcommon'
             ./autogen.sh --prefix=$X11_PREFIX CFLAGS="$CFLAGS"
             if [ "$X11_OS" = "Darwin" ]; then
