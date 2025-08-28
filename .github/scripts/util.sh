@@ -3,15 +3,25 @@
 
 SOURCE_DIR=`pwd`
 
+log_group() {
+    echo "::group::$*"
+}
+
+log_endgroup() {
+    echo "::endgroup::"
+}
+
 clone_source() {
     local pkgname="$1"
     local url="$2"
     local ref="$3"
 
+    log_group "Cloning $pkgname"
     $SOURCE_DIR/.github/scripts/git-smart-checkout.sh \
         --name "$pkgname" \
         --url "$url" \
         --ref "$ref"
+    log_endgroup
 }
 
 build_meson() {
@@ -24,6 +34,7 @@ build_meson() {
     if [ -f $X11_PREFIX/$pkgname.DONE ]; then
         echo "package $pkgname already built"
     else
+        log_group "Build $pkgname (meson)"
         clone_source "$pkgname" "$url" "$ref"
         (
             cd $pkgname
@@ -31,6 +42,7 @@ build_meson() {
             ninja -j${FDO_CI_CONCURRENT:-4} -C build install
         )
         touch $X11_PREFIX/$pkgname.DONE
+        log_endgroup
     fi
 }
 
@@ -44,6 +56,7 @@ build_ac() {
     if [ -f $X11_PREFIX/$pkgname.DONE ]; then
         echo "package $pkgname already built"
     else
+        log_group "Build $pkgname (autoconf)"
         clone_source "$pkgname" "$url" "$ref"
         (
             cd $pkgname
@@ -51,6 +64,7 @@ build_ac() {
             make -j${FDO_CI_CONCURRENT:-4} install
         )
         touch $X11_PREFIX/$pkgname.DONE
+        log_endgroup
     fi
 }
 
@@ -61,12 +75,14 @@ build_drv_ac() {
     shift
     shift
     shift || true
+    log_group "Build driver $pkgname (autoconf)"
     clone_source "$pkgname" "$url" "$ref"
     (
         cd $pkgname
         ./autogen.sh # --prefix=$X11_PREFIX
         make -j${FDO_CI_CONCURRENT:-4} # install
     )
+    log_endgroup
 }
 
 build_ac_xts() {
@@ -79,7 +95,7 @@ build_ac_xts() {
     if [ -f $X11_PREFIX/$pkgname.DONE ]; then
         echo "package $pkgname already built"
     else
-        echo "::group::Build XTS"
+        log_group "Build XTS (autoconf)"
         clone_source "$pkgname" "$url" "$ref"
         (
             cd $pkgname
@@ -92,6 +108,6 @@ build_ac_xts() {
             fi
         )
         touch $X11_PREFIX/$pkgname.DONE
-        echo "::endgroup::"
+        log_endgroup
     fi
 }
