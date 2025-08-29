@@ -120,6 +120,8 @@ e = executable(
     implib: true,
 )
 
+tidy_candidates += e
+
 # subdirs for modules loadable by Xorg
 subdir('dixmods')
 subdir('exa')
@@ -147,7 +149,7 @@ meson.add_install_script(
         join_paths(get_option('prefix'), get_option('bindir'), 'X')))
 
 if get_option('suid_wrapper')
-    executable('Xorg.wrap',
+    tidy_candidates += executable('Xorg.wrap',
         'xorg-wrapper.c',
         include_directories: [inc, xorg_inc],
         dependencies: xorg_deps,
@@ -173,13 +175,14 @@ if get_option('suid_wrapper')
     )
 endif
 
-executable('gtf',
+tidy_candidates += executable('gtf',
     'utils/gtf/gtf.c',
     include_directories: [inc, xorg_inc],
     dependencies: xorg_deps,
     c_args: xorg_c_args,
     install: true,
 )
+
 
 # For symbol presence testing only
 xorgserver_lib = shared_library(
@@ -192,6 +195,8 @@ xorgserver_lib = shared_library(
     c_args: xorg_c_args,
     install: false,
 )
+
+tidy_candidates += xorgserver_lib
 
 xorgserver_dep = declare_dependency(link_with: xorgserver_lib)
 

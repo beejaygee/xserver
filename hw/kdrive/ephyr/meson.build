@@ -73,3 +73,5 @@ xephyr_man = configure_file(
     configuration: manpage_config,
 )
 install_man(xephyr_man)
+
+tidy_candidates += xephyr_server

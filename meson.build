@@ -19,7 +19,6 @@ add_project_link_arguments('-fvisibility=hidden', language : 'c')
 
 if cc.get_id() == 'gcc' or cc.get_id() == 'clang'
     test_wflags = [
-        '-pedantic',
         '-Wall',
         '-Wpointer-arith',
         '-Wmissing-declarations',
@@ -656,6 +655,8 @@ if serverconfigdir == ''
     serverconfigdir = join_paths(get_option('prefix'), get_option('libdir'), 'xorg')
 endif
 
+tidy_candidates = []
+
 subdir('man')
 
 require_docs = get_option('docs') == 'true'
@@ -870,3 +871,26 @@ configure_file(output : 'xorg-server.h',
                configuration : conf_data,
                install: build_xorg,
                install_dir: xorgsdkdir)
+
+clangtidy = find_program('clang-tidy', required : false)
+
+if clangtidy.found()
+    tidy_opts = [
+        '--checks=-*,clang-analyzer-core.uninitialized.*',
+        '--',
+        '-std=c11'
+    ]
+
+    tidy_targets = []
+    foreach s : tidy_candidates
+        tidy_targets += custom_target(
+            'tidy-' + s.name(),
+            input: s.sources(),
+            output: 'tidy-' + s.name() + '.log',
+            command: [clangtidy, '@INPUT@'] + tidy_opts,
+            capture: true
+        )
+    endforeach
+
+    run_target('clang-tidy-all', command: ['true'], depends: tidy_targets)
+endif

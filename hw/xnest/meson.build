@@ -27,7 +27,7 @@ xcb_shape_dep = dependency('xcb-shape', required: true)
 xcb_icccm_dep = dependency('xcb-icccm', required: true)
 xcb_xkb_dep = dependency('xcb-xkb', required: true)
 
-executable(
+tidy_candidates += executable(
     'Xnest',
     srcs,
     include_directories: inc,

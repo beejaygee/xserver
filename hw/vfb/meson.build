@@ -28,3 +28,5 @@ install_man(configure_file(
     output: 'Xvfb.1',
     configuration: manpage_config,
 ))
+
+tidy_candidates += xvfb_server
