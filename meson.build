@@ -11,14 +11,15 @@ release_date = '2025-07-29'
 add_project_arguments('-DHAVE_DIX_CONFIG_H', language: ['c', 'objc'])
 cc = meson.get_compiler('c')
 
+add_project_arguments('-pedantic', language : 'c')
 add_project_arguments('-fno-strict-aliasing', language : 'c')
 add_project_arguments('-fvisibility=hidden', language : 'c')
-add_project_arguments('-Wvla', language: 'c')
 
 add_project_link_arguments('-fvisibility=hidden', language : 'c')
 
 if cc.get_id() == 'gcc' or cc.get_id() == 'clang'
     test_wflags = [
+        '-pedantic',
         '-Wall',
         '-Wpointer-arith',
         '-Wmissing-declarations',
