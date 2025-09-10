@@ -34,7 +34,7 @@ typedef void (*XorgScreenWindowDestroyProcPtr)(CallbackListPtr *pcbl,
                                                WindowPtr pWindow);
 
 /**
- * @brief register a window on the given screen
+ * @brief register a window destructor on the given screen
  *
  * @param pScreen pointer to the screen to register the destructor into
  * @param func pointer to the window destructor function
@@ -72,6 +72,34 @@ void dixScreenHookWindowDestroy(ScreenPtr pScreen,
  **/
 void dixScreenUnhookWindowDestroy(ScreenPtr pScreen,
                                   XorgScreenWindowDestroyProcPtr func);
+
+/**
+ * @brief register a post window destructor on the given screen
+ *
+ * @param pScreen pointer to the screen to register the destructor into
+ * @param func pointer to the window destructor function
+ * @param arg opaque pointer passed to the destructor
+ *
+ * Similar to dixScreenHookWindowDestroy, but the hook is run *after* the screen
+ * drivers's DestroyWindow() proc.
+ *
+ **/
+void dixScreenHookPostWindowDestroy(ScreenPtr pScreen,
+                                    XorgScreenWindowDestroyProcPtr func);
+
+/**
+ * @brief unregister a window destructor on the given screen
+ *
+ * @param pScreen pointer to the screen to unregister the destructor from
+ * @param func pointer to the window destructor function
+ * @param arg opaque pointer passed to the destructor
+ *
+ * @see dixScreenHookWindowDestroy
+ *
+ * Unregister a window destructor hook registered via @ref dixScreenHookWindowDestroy
+ **/
+void dixScreenUnhookPostWindowDestroy(ScreenPtr pScreen,
+                                      XorgScreenWindowDestroyProcPtr func);
 
 typedef struct {
     WindowPtr window;

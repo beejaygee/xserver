@@ -26,6 +26,7 @@
     }
 
 DECLARE_HOOK_PROC(WindowDestroy, hookWindowDestroy, XorgScreenWindowDestroyProcPtr);
+DECLARE_HOOK_PROC(PostWindowDestroy, hookWindowDestroy, XorgScreenWindowDestroyProcPtr);
 DECLARE_HOOK_PROC(WindowPosition, hookWindowPosition, XorgScreenWindowPositionProcPtr);
 DECLARE_HOOK_PROC(Close, hookClose, XorgScreenCloseProcPtr);
 DECLARE_HOOK_PROC(PostClose, hookPostClose, XorgScreenCloseProcPtr);
@@ -42,7 +43,11 @@ int dixScreenRaiseWindowDestroy(WindowPtr pWin)
 
     CallCallbacks(&pScreen->hookWindowDestroy, pWin);
 
-    return (pScreen->DestroyWindow ? pScreen->DestroyWindow(pWin) : Success);
+    int rc = pScreen->DestroyWindow ? pScreen->DestroyWindow(pWin) : Success;
+
+    CallCallbacks(&pScreen->hookPostWindowDestroy, pWin);
+
+    return rc;
 }
 
 void dixScreenRaiseWindowPosition(WindowPtr pWin, uint32_t x, uint32_t y)
