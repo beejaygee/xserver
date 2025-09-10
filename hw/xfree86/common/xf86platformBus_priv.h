@@ -25,6 +25,7 @@
 #define _XSERVER_XF86_PLATFORM_BUS_PRIV_H_
 
 #include "xf86platformBus.h"
+#include "config/hotplug_priv.h"
 
 /* xf86_platform_device flags */
 #define XF86_PDEV_UNOWNED       0x01
@@ -141,9 +142,9 @@ _xf86_get_platform_device_int_attrib(struct xf86_platform_device *device, int at
     }
 }
 
-#define xf86_get_platform_device_int_attrib(device, attrib, def) _xf86_get_platform_device_int_attrib(device,attrib,_ODEV_ATTRIB_INT_CHECK(attrib,def))
-
 #endif /* _XORG_CONFIG_H_ */
+
+#define xf86_get_platform_device_int_attrib(device, attrib, def) _xf86_get_platform_device_int_attrib(device,attrib,_ODEV_ATTRIB_INT_CHECK(attrib,def))
 
 extern void xf86platformVTProbe(void);
 extern void xf86platformPrimary(void);

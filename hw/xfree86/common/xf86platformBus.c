@@ -54,7 +54,6 @@
 #include "xf86Bus.h"
 #include "Pci.h"
 #include "xf86platformBus_priv.h"
-#include "xf86platformBus.h"
 #include "xf86Xinput_priv.h"
 #include "xf86Config.h"
 #include "xf86Crtc.h"
@@ -782,40 +781,6 @@ void xf86platformPrimary(void)
 
             LogMessageVerb(X_NONE, 1, "\tfalling back to %s\n", primaryBus.id.plat->attribs->syspath);
         }
-    }
-}
-
-char *
-_xf86_get_platform_device_attrib(struct xf86_platform_device *device, int attrib, int (*fake)[0])
-{
-    switch (attrib) {
-    case ODEV_ATTRIB_PATH:
-        return xf86_platform_device_odev_attributes(device)->path;
-    case ODEV_ATTRIB_SYSPATH:
-        return xf86_platform_device_odev_attributes(device)->syspath;
-    case ODEV_ATTRIB_BUSID:
-        return xf86_platform_device_odev_attributes(device)->busid;
-    case ODEV_ATTRIB_DRIVER:
-        return xf86_platform_device_odev_attributes(device)->driver;
-    default:
-        assert(FALSE);
-        return NULL;
-    }
-}
-
-int
-_xf86_get_platform_device_int_attrib(struct xf86_platform_device *device, int attrib, int (*fake)[0])
-{
-    switch (attrib) {
-    case ODEV_ATTRIB_FD:
-        return xf86_platform_device_odev_attributes(device)->fd;
-    case ODEV_ATTRIB_MAJOR:
-        return xf86_platform_device_odev_attributes(device)->major;
-    case ODEV_ATTRIB_MINOR:
-        return xf86_platform_device_odev_attributes(device)->minor;
-    default:
-        assert(FALSE);
-        return 0;
     }
 }
 
