@@ -297,7 +297,7 @@ XvScreenInit(ScreenPtr pScreen)
 
     dixSetPrivate(&pScreen->devPrivates, XvScreenKey, pxvs);
 
-    dixScreenHookWindowDestroy(pScreen, XvWindowDestroy);
+    dixScreenHookPostWindowDestroy(pScreen, XvWindowDestroy);
     dixScreenHookClose(pScreen, XvScreenClose);
     dixScreenHookPixmapDestroy(pScreen, XvPixmapDestroy);
 
