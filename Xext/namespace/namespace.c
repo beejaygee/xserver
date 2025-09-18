@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <X11/Xmd.h>
 
+#include "dix/client_priv.h"
 #include "dix/dix_priv.h"
 #include "dix/property_priv.h"
 #include "dix/selection_priv.h"
@@ -34,6 +35,7 @@ NamespaceExtensionInit(void)
           AddCallback(&PostInitRootWindowCallback, hookInitRootWindow, NULL) &&
           AddCallback(&PropertyFilterCallback, hookWindowProperty, NULL) &&
           AddCallback(&SelectionFilterCallback, hookSelectionFilter, NULL) &&
+          AddCallback(&ClientDestroyCallback, hookClientDestroy, NULL) &&
           XaceRegisterCallback(XACE_CLIENT_ACCESS, hookClient, NULL) &&
           XaceRegisterCallback(XACE_DEVICE_ACCESS, hookDevice, NULL) &&
           XaceRegisterCallback(XACE_EXT_DISPATCH, hookExtDispatch, NULL) &&
