@@ -404,6 +404,8 @@ xf86CrtcSetModeTransform(xf86CrtcPtr crtc, DisplayModePtr mode,
             xf86_hide_cursors(scrn);
     }
     else {
+        LogMessage(X_WARNING, "set_major_mode() returned failure\n");
+        LogMessage(X_WARNING, "SetModeTransform() mode=%p saved_mode=%p\n", mode, saved_mode);
         crtc->x = saved_x;
         crtc->y = saved_y;
         crtc->rotation = saved_rotation;
